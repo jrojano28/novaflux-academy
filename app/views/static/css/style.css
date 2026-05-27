@@ -2002,3 +2002,106 @@ footer p {
         font-size: 2rem;
     }
 }
+
+/* ══════════ ENHANCEMENTS: NOVAFLUX ACADEMY EXPANSION ══════════ */
+
+/* Completado en barra lateral */
+.lesson-item.completed-item button {
+    color: #a7f3d0; /* emerald-200 */
+}
+
+.lesson-item.completed-item button:hover {
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.lesson-item.completed-item.active button {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border-color: var(--neon-green) !important;
+    color: var(--neon-green) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.1) !important;
+}
+
+.lesson-item.completed-item.active button::before {
+    background: var(--neon-green) !important;
+    box-shadow: 0 0 8px var(--neon-green) !important;
+}
+
+/* Botón interactivo toggle completado */
+.btn-toggle-complete {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-toggle-complete:not(.completed):hover {
+    background: rgba(255,255,255,0.06) !important;
+    border-color: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+.btn-toggle-complete.completed:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.45) !important;
+    filter: brightness(1.1);
+}
+
+/* Timeline del Dashboard */
+.timeline-node {
+    transition: all 0.3s ease;
+}
+
+.timeline-node:hover {
+    transform: translateX(5px);
+}
+
+.timeline-node:hover .timeline-marker {
+    transform: scale(1.3);
+}
+
+/* Botones de navegación */
+.btn-prev-lesson, .btn-next-lesson {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-prev-lesson:not([disabled]):hover, .btn-next-lesson:not([disabled]):hover {
+    border-color: var(--neon-cyan) !important;
+    color: var(--neon-cyan) !important;
+    background: rgba(0, 242, 254, 0.04) !important;
+    transform: translateY(-2px);
+}
+
+/* Estilos adaptativos responsivos adicionales */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        flex-direction: column;
+    }
+    .dashboard-main-col, .dashboard-side-col {
+        flex: 1 1 100% !important;
+    }
+    .my-course-item {
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding: 1.25rem !important;
+    }
+    .my-course-cover {
+        width: 100% !important;
+        height: 120px !important;
+    }
+    .my-course-actions {
+        width: 100%;
+        text-align: right;
+    }
+    .my-course-actions a {
+        width: 100%;
+        text-align: center;
+    }
+    .roadmap-detail-header {
+        padding: 1.5rem !important;
+    }
+    .roadmap-timeline {
+        padding: 2rem 1rem !important;
+    }
+    .timeline-card-cover {
+        width: 100% !important;
+        height: 130px !important;
+    }
+}
+

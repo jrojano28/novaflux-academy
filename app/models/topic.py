@@ -2,6 +2,7 @@
 # Definición de los modelos de Tema (Topic) y Contenido (Content) para la base de datos.
 
 from app.models import db
+from datetime import datetime
 
 class Topic(db.Model):
     __tablename__ = 'topics'
@@ -29,3 +30,24 @@ class Content(db.Model):
 
     def __repr__(self):
         return f'<Content {self.title}>'
+
+
+class UserLessonProgress(db.Model):
+    """Guarda el progreso individual de las lecciones (contents) por cada estudiante."""
+    __tablename__ = 'user_lesson_progress'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content_id = db.Column(db.Integer, db.ForeignKey('contents.id'), nullable=False)
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Restricción única para evitar registros duplicados de la misma lección para el mismo usuario
+    __table_args__ = (db.UniqueConstraint('user_id', 'content_id', name='_user_lesson_uc'),)
+
+    # Relaciones
+    user = db.relationship('User', backref=db.backref('lesson_progress', lazy=True, cascade="all, delete-orphan"))
+    content = db.relationship('Content', backref=db.backref('user_progress', lazy=True, cascade="all, delete-orphan"))
+
+    def __repr__(self):
+        return f'<UserLessonProgress user={self.user_id} content={self.content_id}>'
+

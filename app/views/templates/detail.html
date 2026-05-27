@@ -15,14 +15,23 @@
         <p>{{ course.description }}</p>
         <div class="course-hero-actions">
             {% if is_enrolled %}
-                <span class="enrolled-badge">✅ Inscrito</span>
-                <a href="#content-reader" class="btn-primary">Continuar Aprendiendo</a>
+                {% if is_locked %}
+                    <span class="enrolled-badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">🔒 Bloqueado en Trayectoria</span>
+                {% else %}
+                    <span class="enrolled-badge">✅ Inscrito</span>
+                    <a href="#content-reader" class="btn-primary">Continuar Aprendiendo</a>
+                {% endif %}
             {% else %}
-                <form method="POST" action="{{ url_for('course.enroll', course_id=course.id) }}" style="display:inline;">
-                    <button type="submit" class="btn-primary" id="enroll-btn">
-                        🚀 Inscribirme Gratis
-                    </button>
-                </form>
+                {% if is_locked %}
+                    <span class="enrolled-badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">🔒 Curso Bloqueado</span>
+                    <a href="{{ url_for('main.roadmaps') }}" class="btn-secondary" style="margin-left: 1rem;">Ver Prerrequisito</a>
+                {% else %}
+                    <form method="POST" action="{{ url_for('course.enroll', course_id=course.id) }}" style="display:inline;">
+                        <button type="submit" class="btn-primary" id="enroll-btn">
+                            🚀 Inscribirme Gratis
+                        </button>
+                    </form>
+                {% endif %}
             {% endif %}
         </div>
     </div>
@@ -31,77 +40,140 @@
     </div>
 </div>
 
-<!-- Barra de progreso si está inscrito -->
-{% if is_enrolled and enrollment %}
+<!-- Barra de progreso si está inscrito y no está bloqueado -->
+{% if is_enrolled and enrollment and not is_locked %}
 <div class="progress-strip">
     <div class="container" style="padding-top:0; padding-bottom:0;">
-        <div class="progress-strip-inner">
-            <span>Tu Progreso: {{ enrollment.progress | round(0) | int }}%</span>
-            <div class="progress-bar-track" style="flex:1; max-width:400px;">
-                <div class="progress-bar-fill" style="width:{{ enrollment.progress }}%;"></div>
+        <div class="progress-strip-inner" style="display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 1rem 0;">
+            <span style="font-family: var(--font-tech); font-weight: 700; color: var(--neon-cyan);">Tu Progreso del Curso: <span id="progress-percent-val">{{ enrollment.progress | round(0) | int }}</span>%</span>
+            <div class="progress-bar-track" style="flex:1; max-width:600px; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; position: relative;">
+                <div class="progress-bar-fill" id="course-progress-bar" style="width:{{ enrollment.progress }}%; height: 100%; background: var(--primary-gradient); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);"></div>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
 
-<!-- LECTOR DEL CURSO (SPA) -->
-<div class="detail-layout" id="content-reader">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>{{ course.title }}</h2>
-            <p>{{ course.topics|length }} Módulos · {{ course.duration_hours }}h</p>
+<!-- LECTOR DEL CURSO -->
+<div class="detail-layout-container" style="position: relative;">
+    {% if is_locked %}
+    <!-- Pantalla de Bloqueo Inmersiva -->
+    <div class="course-lock-overlay" style="padding: 6rem 2rem; text-align: center; background: rgba(5,7,15,0.9); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="lock-card" style="max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 3.5rem; border-radius: 24px; border: 1px solid rgba(239, 68, 68, 0.25); box-shadow: 0 0 40px rgba(239, 68, 68, 0.08);">
+            <div class="lock-icon" style="font-size: 4.5rem; margin-bottom: 1.5rem; animation: pulseLock 2s infinite;">🔒</div>
+            <h2 style="font-family: var(--font-tech); font-size: 2.2rem; margin-bottom: 1rem; color: #ffffff;">Contenido Restringido</h2>
+            <p style="color: var(--text-muted); font-size: 1.15rem; line-height: 1.8; margin-bottom: 2.5rem;">
+                {{ lock_reason }}
+            </p>
+            <a href="{{ url_for('main.roadmaps') }}" class="btn-primary" style="box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));">
+                🗺️ Ver mi Ruta de Aprendizaje
+            </a>
         </div>
-        <div class="sidebar-menu">
-            {% if course.topics %}
-                {% set sidebar_first = namespace(value=true) %}
-                {% for topic in course.topics|sort(attribute='order') %}
-                    <div class="topic-group">
-                        <div class="topic-title">{{ topic.title }}</div>
-                        <ul class="lesson-list">
-                            {% for content in topic.contents|sort(attribute='order') %}
-                                <li class="lesson-item {% if sidebar_first.value %}active{% set sidebar_first.value = false %}{% endif %}">
-                                    <button class="lesson-btn" data-target="lesson-content-{{ content.id }}">
-                                        {{ content.title }}
-                                    </button>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p style="padding:1rem; color:var(--text-muted); font-size:0.9rem;">Sin temas disponibles.</p>
-            {% endif %}
-        </div>
-    </aside>
-
-    <!-- ÁREA DE LECTURA -->
-    <section class="content-area">
-        <div class="content-wrapper">
-            {% set first_lesson_rendered = namespace(value=false) %}
-            {% if course.topics %}
-                {% for topic in course.topics|sort(attribute='order') %}
-                    {% for content in topic.contents|sort(attribute='order') %}
-                        <div class="lesson-content-block {% if not first_lesson_rendered.value %}active{% set first_lesson_rendered.value = true %}{% endif %}" id="lesson-content-{{ content.id }}">
-                            <div class="lesson-meta">{{ topic.title }}</div>
-                            <h1 class="lesson-title-display">{{ content.title }}</h1>
-                            <div class="lesson-body-display">
-                                {{ content.body|safe }}
-                            </div>
+    </div>
+    {% else %}
+    <div class="detail-layout" id="content-reader">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Contenidos</h2>
+                <p>{{ course.topics|length }} Módulos</p>
+            </div>
+            <div class="sidebar-menu">
+                {% if course.topics %}
+                    {% set sidebar_first = namespace(value=true) %}
+                    {% for topic in course.topics|sort(attribute='order') %}
+                        <div class="topic-group">
+                            <div class="topic-title">{{ topic.title }}</div>
+                            <ul class="lesson-list">
+                                {% for content in topic.contents|sort(attribute='order') %}
+                                    {% set is_completed = content.id in completed_lesson_ids %}
+                                    <li class="lesson-item {% if sidebar_first.value %}active{% set sidebar_first.value = false %}{% endif %} {% if is_completed %}completed-item{% endif %}" id="sidebar-item-{{ content.id }}">
+                                        <button class="lesson-btn" data-target="lesson-content-{{ content.id }}" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; width: 100%;">
+                                            <span class="lesson-btn-title" style="flex:1; text-align: left;">{{ content.title }}</span>
+                                            <span class="sidebar-checkmark" style="color: var(--neon-green); font-weight: bold; font-size: 1rem; opacity: {% if is_completed %}1{% else %}0.2{% endif %}; transition: all 0.3s ease;">
+                                                {% if is_completed %}✓{% else %}○{% endif %}
+                                            </span>
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     {% endfor %}
-                {% endfor %}
-            {% endif %}
+                {% else %}
+                    <p style="padding:1rem; color:var(--text-muted); font-size:0.9rem;">Sin temas disponibles.</p>
+                {% endif %}
+            </div>
+        </aside>
 
-            {% if not first_lesson_rendered.value %}
-                <div class="empty-state">
-                    <h3>Sin Lecciones Disponibles</h3>
-                    <p>Este curso no contiene lecciones asignadas todavía.</p>
-                    <a href="{{ url_for('course.list_courses') }}" class="btn-primary">Volver al catálogo</a>
-                </div>
-            {% endif %}
-        </div>
-    </section>
+        <!-- ÁREA DE LECTURA -->
+        <section class="content-area">
+            <div class="content-wrapper">
+                {% set first_lesson_rendered = namespace(value=false) %}
+                {% if course.topics %}
+                    {% for topic in course.topics|sort(attribute='order') %}
+                        {% for content in topic.contents|sort(attribute='order') %}
+                            {% set is_completed = content.id in completed_lesson_ids %}
+                            <div class="lesson-content-block {% if not first_lesson_rendered.value %}active{% set first_lesson_rendered.value = true %}{% endif %}" id="lesson-content-{{ content.id }}" data-lesson-id="{{ content.id }}">
+                                <div class="lesson-meta">{{ topic.title }}</div>
+                                <h1 class="lesson-title-display">{{ content.title }}</h1>
+                                <div class="lesson-body-display">
+                                    {{ content.body|safe }}
+                                </div>
+
+                                <!-- Botón interactivo de completado -->
+                                {% if is_enrolled %}
+                                <div class="lesson-completion-box" style="margin-top: 4rem; padding: 2rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; text-align: center; backdrop-filter: blur(5px);">
+                                    <h4 style="font-family: var(--font-tech); margin-bottom: 1rem; color: #ffffff;">¿Terminaste de estudiar esta lección?</h4>
+                                    <button class="btn-toggle-complete {% if is_completed %}completed{% endif %}" 
+                                            data-content-id="{{ content.id }}" 
+                                            style="padding: 0.9rem 2.2rem; font-family: var(--font-tech); font-weight: 700; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; border: none; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;
+                                                   {% if is_completed %}
+                                                       background: rgba(16, 185, 129, 0.15); color: var(--neon-green); border: 1px solid var(--neon-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+                                                   {% else %}
+                                                       background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.2);
+                                                   {% endif %}">
+                                        {% if is_completed %}
+                                            ✓ Lección Completada
+                                        {% else %}
+                                            Marcar como Completada
+                                        {% endif %}
+                                    </button>
+                                </div>
+                                {% endif %}
+
+                                <!-- Botones de Navegación de Lecciones -->
+                                <div class="lesson-navigation" style="display: flex; justify-content: space-between; align-items: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                                    <button class="btn-prev-lesson btn-secondary" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        ← Anterior
+                                    </button>
+                                    <button class="btn-next-lesson btn-secondary" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        Siguiente →
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if not first_lesson_rendered.value %}
+                    <div class="empty-state">
+                        <h3>Sin Lecciones Disponibles</h3>
+                        <p>Este curso no contiene lecciones asignadas todavía.</p>
+                        <a href="{{ url_for('course.list_courses') }}" class="btn-primary">Volver al catálogo</a>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+    {% endif %}
 </div>
+
+<!-- Animación CSS clave para el candado -->
+<style>
+@keyframes pulseLock {
+    0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.2)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.5)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.2)); }
+}
+</style>
 {% endblock %}

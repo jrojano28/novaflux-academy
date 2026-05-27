@@ -75,3 +75,21 @@ class RoadmapCourse(db.Model):
 
     def __repr__(self):
         return f'<RoadmapCourse roadmap={self.roadmap_id} course={self.course_id}>'
+
+
+class RoadmapEnrollment(db.Model):
+    """Tabla de inscripciones a trayectorias: relaciona alumnos con trayectorias de aprendizaje."""
+    __tablename__ = 'roadmap_enrollments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    roadmap_id = db.Column(db.Integer, db.ForeignKey('roadmaps.id'), nullable=False)
+    enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relaciones
+    user = db.relationship('User', backref=db.backref('roadmap_enrollments', lazy=True, cascade="all, delete-orphan"))
+    roadmap = db.relationship('Roadmap', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
+
+    def __repr__(self):
+        return f'<RoadmapEnrollment user={self.user_id} roadmap={self.roadmap_id}>'
+
