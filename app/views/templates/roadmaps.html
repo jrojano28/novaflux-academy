@@ -1,0 +1,67 @@
+<!-- app/views/templates/roadmaps.html -->
+{% extends 'base.html' %}
+
+{% block title %}Trayectorias de Competencia - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="page-header">
+        <h1 class="section-title">Trayectorias de Competencia</h1>
+        <p style="color:var(--text-muted); margin-top:-1rem; max-width:650px; font-size:1.1rem;">
+            Una trayectoria es una ruta curada de cursos que te lleva desde cero hasta un perfil profesional completo y competitivo.
+        </p>
+    </div>
+
+    {% if roadmaps %}
+        {% for roadmap in roadmaps %}
+        <div class="roadmap-detail-card">
+            <!-- Cabecera de la trayectoria -->
+            <div class="roadmap-detail-header" style="background: linear-gradient(135deg, {{ roadmap.color_start }}, {{ roadmap.color_end }});">
+                <div class="roadmap-detail-icon">{{ roadmap.icon or '🧠' }}</div>
+                <div>
+                    <h2>{{ roadmap.title }}</h2>
+                    <p>{{ roadmap.description }}</p>
+                    <span class="roadmap-courses-count-badge">{{ roadmap.courses|length }} Cursos en esta trayectoria</span>
+                </div>
+            </div>
+
+            <!-- Línea de tiempo de cursos -->
+            <div class="roadmap-timeline">
+                {% for rm_course in roadmap.courses %}
+                <div class="timeline-item">
+                    <div class="timeline-connector">
+                        <div class="timeline-dot" style="background: linear-gradient(135deg, {{ roadmap.color_start }}, {{ roadmap.color_end }});"></div>
+                        {% if not loop.last %}
+                        <div class="timeline-line"></div>
+                        {% endif %}
+                    </div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-cover" style="background: {{ rm_course.course.image_gradient or 'linear-gradient(135deg, #1a1a4e, #00f2fe)' }};"></div>
+                        <div class="timeline-card-info">
+                            <div class="timeline-step-num">Paso {{ rm_course.order }}</div>
+                            <h3>{{ rm_course.course.title }}</h3>
+                            <p>{{ rm_course.course.description[:100] ~ '...' if rm_course.course.description and rm_course.course.description|length > 100 else rm_course.course.description }}</p>
+                            <div class="timeline-card-meta">
+                                <span class="course-level-badge {{ rm_course.course.level|lower }}">{{ rm_course.course.level }}</span>
+                                <span>⏱ {{ rm_course.course.duration_hours }}h</span>
+                                <span>📦 {{ rm_course.course.topics|length }} Módulos</span>
+                            </div>
+                            <a href="{{ url_for('course.course_detail', course_id=rm_course.course.id) }}" class="btn-secondary" style="margin-top:0.8rem; display:inline-block;">
+                                Ver Curso →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <h3>Trayectorias en Preparación</h3>
+            <p>Estamos diseñando trayectorias de aprendizaje increíbles para ti. ¡Vuelve pronto!</p>
+            <a href="{{ url_for('course.list_courses') }}" class="btn-primary">Explorar Cursos por Ahora</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

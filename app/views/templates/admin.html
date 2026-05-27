@@ -1,0 +1,105 @@
+<!-- app/views/templates/admin.html -->
+{% extends 'base.html' %}
+
+{% block title %}Panel de Administrador - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="dashboard-header">
+        <div class="dashboard-avatar" style="background:linear-gradient(135deg,#f43f5e,#7c3aed);">🛡</div>
+        <div>
+            <h1 class="section-title" style="margin-bottom:0.3rem;">Panel de Administrador</h1>
+            <p style="color:var(--text-muted);">Gestiona y monitorea la plataforma NovaFlux Academy.</p>
+        </div>
+    </div>
+
+    <!-- ESTADÍSTICAS GLOBALES -->
+    <div class="stats-grid">
+        <div class="stat-card stat-cyan">
+            <div class="stat-card-icon">👥</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.total_users }}</span>
+                <span class="stat-card-label">Usuarios Totales</span>
+            </div>
+        </div>
+        <div class="stat-card stat-purple">
+            <div class="stat-card-icon">🎓</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.total_students }}</span>
+                <span class="stat-card-label">Estudiantes</span>
+            </div>
+        </div>
+        <div class="stat-card stat-magenta">
+            <div class="stat-card-icon">👨‍🏫</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.total_teachers }}</span>
+                <span class="stat-card-label">Profesores</span>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-card-icon">📚</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.total_courses }}</span>
+                <span class="stat-card-label">Cursos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE USUARIOS RECIENTES -->
+    <h2 class="section-title" style="margin-top:3rem;">Usuarios Recientes</h2>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in recent_users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                        <div class="table-user">
+                            <span class="table-avatar">{{ user.username[0].upper() }}</span>
+                            {{ user.username }}
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="role-badge role-{{ user.role }}">{{ user.role }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- CURSOS -->
+    <h2 class="section-title" style="margin-top:3rem;">Cursos Registrados</h2>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Nivel</th>
+                    <th>Módulos</th>
+                    <th>Inscritos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ course.id }}</td>
+                    <td><a href="{{ url_for('course.course_detail', course_id=course.id) }}" style="color:var(--neon-cyan); text-decoration:none;">{{ course.title }}</a></td>
+                    <td><span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span></td>
+                    <td>{{ course.topics|length }}</td>
+                    <td>{{ course.enrollments|length }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

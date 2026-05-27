@@ -1,0 +1,61 @@
+<!-- app/views/templates/login.html -->
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">⚡</div>
+            <h1>Bienvenido de Vuelta</h1>
+            <p>Inicia sesión para continuar tu aprendizaje</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form" id="login-form">
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">@</span>
+                    <input type="email" id="email" name="email" placeholder="tu@email.com" required autocomplete="email">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-auth" id="login-submit-btn">
+                <span class="btn-text">Ingresar</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </form>
+
+        <div class="auth-divider">
+            <span>¿No tienes cuenta?</span>
+        </div>
+
+        <a href="{{ url_for('auth.register') }}" class="btn-auth-secondary">
+            Crear Cuenta Gratis
+        </a>
+
+        <div class="auth-demo-hint">
+            <p>Cuentas de prueba disponibles:</p>
+            <div class="demo-accounts">
+                <span class="demo-chip student">Estudiante: student@demo.com</span>
+                <span class="demo-chip teacher">Profesor: teacher@demo.com</span>
+                <span class="demo-chip admin">Admin: admin@demo.com</span>
+                <span class="demo-pass">Contraseña: novaflux2026</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decoraciones de fondo cyber -->
+    <div class="auth-bg-orb orb-1"></div>
+    <div class="auth-bg-orb orb-2"></div>
+</section>
+{% endblock %}

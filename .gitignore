@@ -1,0 +1,24 @@
+# .gitignore para proyecto Flask - NovaFlux Academy
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+env/
+
+# Caché de Python
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de datos y archivos locales
+instance/
+*.db
+*.sqlite
+
+# Carpetas de IDEs y del sistema
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

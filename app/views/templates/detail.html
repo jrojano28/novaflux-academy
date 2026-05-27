@@ -1,0 +1,107 @@
+<!-- app/views/templates/detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<!-- PORTADA DEL CURSO -->
+<div class="course-hero" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #0d1117 0%, #161b27 100%)' }};">
+    <div class="course-hero-content">
+        <div class="course-hero-meta">
+            <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
+            <span class="course-hero-duration">⏱ {{ course.duration_hours }} horas</span>
+        </div>
+        <h1>{{ course.title }}</h1>
+        <p>{{ course.description }}</p>
+        <div class="course-hero-actions">
+            {% if is_enrolled %}
+                <span class="enrolled-badge">✅ Inscrito</span>
+                <a href="#content-reader" class="btn-primary">Continuar Aprendiendo</a>
+            {% else %}
+                <form method="POST" action="{{ url_for('course.enroll', course_id=course.id) }}" style="display:inline;">
+                    <button type="submit" class="btn-primary" id="enroll-btn">
+                        🚀 Inscribirme Gratis
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="course-hero-bg-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+</div>
+
+<!-- Barra de progreso si está inscrito -->
+{% if is_enrolled and enrollment %}
+<div class="progress-strip">
+    <div class="container" style="padding-top:0; padding-bottom:0;">
+        <div class="progress-strip-inner">
+            <span>Tu Progreso: {{ enrollment.progress | round(0) | int }}%</span>
+            <div class="progress-bar-track" style="flex:1; max-width:400px;">
+                <div class="progress-bar-fill" style="width:{{ enrollment.progress }}%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- LECTOR DEL CURSO (SPA) -->
+<div class="detail-layout" id="content-reader">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>{{ course.title }}</h2>
+            <p>{{ course.topics|length }} Módulos · {{ course.duration_hours }}h</p>
+        </div>
+        <div class="sidebar-menu">
+            {% if course.topics %}
+                {% set sidebar_first = namespace(value=true) %}
+                {% for topic in course.topics|sort(attribute='order') %}
+                    <div class="topic-group">
+                        <div class="topic-title">{{ topic.title }}</div>
+                        <ul class="lesson-list">
+                            {% for content in topic.contents|sort(attribute='order') %}
+                                <li class="lesson-item {% if sidebar_first.value %}active{% set sidebar_first.value = false %}{% endif %}">
+                                    <button class="lesson-btn" data-target="lesson-content-{{ content.id }}">
+                                        {{ content.title }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="padding:1rem; color:var(--text-muted); font-size:0.9rem;">Sin temas disponibles.</p>
+            {% endif %}
+        </div>
+    </aside>
+
+    <!-- ÁREA DE LECTURA -->
+    <section class="content-area">
+        <div class="content-wrapper">
+            {% set first_lesson_rendered = namespace(value=false) %}
+            {% if course.topics %}
+                {% for topic in course.topics|sort(attribute='order') %}
+                    {% for content in topic.contents|sort(attribute='order') %}
+                        <div class="lesson-content-block {% if not first_lesson_rendered.value %}active{% set first_lesson_rendered.value = true %}{% endif %}" id="lesson-content-{{ content.id }}">
+                            <div class="lesson-meta">{{ topic.title }}</div>
+                            <h1 class="lesson-title-display">{{ content.title }}</h1>
+                            <div class="lesson-body-display">
+                                {{ content.body|safe }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            {% if not first_lesson_rendered.value %}
+                <div class="empty-state">
+                    <h3>Sin Lecciones Disponibles</h3>
+                    <p>Este curso no contiene lecciones asignadas todavía.</p>
+                    <a href="{{ url_for('course.list_courses') }}" class="btn-primary">Volver al catálogo</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

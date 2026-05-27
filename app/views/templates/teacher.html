@@ -1,0 +1,73 @@
+<!-- app/views/templates/teacher.html -->
+{% extends 'base.html' %}
+
+{% block title %}Panel del Profesor - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="dashboard-header">
+        <div class="dashboard-avatar" style="background:linear-gradient(135deg,#8b5cf6,#00f2fe);">👨‍🏫</div>
+        <div>
+            <h1 class="section-title" style="margin-bottom:0.3rem;">Hola, Prof. {{ teacher.username }} 👋</h1>
+            <p style="color:var(--text-muted);">Aquí puedes revisar el estado de tus cursos y estudiantes.</p>
+        </div>
+    </div>
+
+    <!-- ESTADÍSTICAS DEL PROFESOR -->
+    <div class="stats-grid">
+        <div class="stat-card stat-cyan">
+            <div class="stat-card-icon">📚</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ my_courses|length }}</span>
+                <span class="stat-card-label">Mis Cursos</span>
+            </div>
+        </div>
+        <div class="stat-card stat-purple">
+            <div class="stat-card-icon">👥</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ total_students }}</span>
+                <span class="stat-card-label">Estudiantes Totales</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE MIS CURSOS -->
+    <h2 class="section-title" style="margin-top:3rem;">Mis Cursos</h2>
+    {% if my_courses %}
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Nivel</th>
+                    <th>Módulos</th>
+                    <th>Inscritos</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in my_courses %}
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-cover-mini" style="background:{{ course.image_gradient or 'linear-gradient(135deg,#1a1a4e,#00f2fe)' }};"></div>
+                            {{ course.title }}
+                        </div>
+                    </td>
+                    <td><span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span></td>
+                    <td>{{ course.topics|length }}</td>
+                    <td>{{ course.enrollments|length }}</td>
+                    <td><a href="{{ url_for('course.course_detail', course_id=course.id) }}" class="btn-secondary" style="padding:0.4rem 0.9rem; font-size:0.85rem;">Ver</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>Sin Cursos Asignados</h3>
+            <p>Todavía no tienes cursos registrados como instructor. Contacta al administrador para que te asigne cursos.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!-- app/views/templates/courses.html -->
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Cursos - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="page-header">
+        <h1 class="section-title">Catálogo de Cursos</h1>
+        <p style="color:var(--text-muted); margin-top:-1rem; font-size:1.1rem; max-width:600px;">
+            Explora nuestra colección de cursos especializados y avanza hacia la maestría tecnológica.
+        </p>
+    </div>
+
+    <div class="courses-grid">
+        {% if courses %}
+            {% for course in courses %}
+            <div class="course-card">
+                <div class="course-cover" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #1a1a4e 0%, #00f2fe 100%)' }};">
+                    <div class="course-cover-overlay">
+                        <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
+                        <div class="course-duration-badge">⏱ {{ course.duration_hours }}h</div>
+                    </div>
+                    <div class="course-cover-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="course-content">
+                    <span class="course-tag">Curso Completo</span>
+                    <h3 class="course-title">{{ course.title }}</h3>
+                    <p class="course-desc">{{ course.description[:130] ~ '...' if course.description and course.description|length > 130 else course.description }}</p>
+                    <div class="course-footer">
+                        <a href="{{ url_for('course.course_detail', course_id=course.id) }}" class="btn-primary" style="padding:0.6rem 1.4rem; font-size:0.9rem;">
+                            Empezar →
+                        </a>
+                        <span class="course-topics-count">{{ course.topics|length }} Módulos</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state" style="grid-column:1/-1;">
+                <h3>Sin Cursos Disponibles</h3>
+                <p>Actualmente no hay cursos en la base de datos.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

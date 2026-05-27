@@ -1,0 +1,71 @@
+<!-- app/views/templates/register.html -->
+{% extends 'base.html' %}
+
+{% block title %}Crear Cuenta - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">🚀</div>
+            <h1>Comienza tu Viaje</h1>
+            <p>Crea tu cuenta y accede a cursos de clase mundial</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form" id="register-form">
+            <div class="form-group">
+                <label for="username">Nombre de Usuario</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" name="username" placeholder="tu_usuario" required minlength="3" maxlength="50">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">@</span>
+                    <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required minlength="8">
+                </div>
+                <div class="password-strength" id="strength-bar">
+                    <div class="strength-fill" id="strength-fill"></div>
+                </div>
+                <small id="strength-label"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirmar Contraseña</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✅</span>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite tu contraseña" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-auth" id="register-submit-btn">
+                <span class="btn-text">Crear Cuenta</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </form>
+
+        <div class="auth-divider">
+            <span>¿Ya tienes cuenta?</span>
+        </div>
+
+        <a href="{{ url_for('auth.login') }}" class="btn-auth-secondary">
+            Iniciar Sesión
+        </a>
+    </div>
+
+    <!-- Decoraciones de fondo cyber -->
+    <div class="auth-bg-orb orb-1"></div>
+    <div class="auth-bg-orb orb-2"></div>
+</section>
+{% endblock %}

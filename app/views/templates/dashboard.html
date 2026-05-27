@@ -1,0 +1,96 @@
+<!-- app/views/templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Mi Dashboard - NovaFlux Academy{% endblock %}
+
+{% block content %}
+<section class="container">
+    <!-- Saludo al usuario -->
+    <div class="dashboard-header">
+        <div class="dashboard-avatar">{{ user.username[0].upper() }}</div>
+        <div>
+            <h1 class="section-title" style="margin-bottom:0.3rem;">¡Hola, {{ user.username }}! 👋</h1>
+            <p style="color:var(--text-muted);">Continúa aprendiendo desde donde lo dejaste.</p>
+        </div>
+    </div>
+
+    <!-- TARJETAS DE ESTADÍSTICAS -->
+    <div class="stats-grid">
+        <div class="stat-card stat-cyan">
+            <div class="stat-card-icon">📚</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.total_courses }}</span>
+                <span class="stat-card-label">Cursos Inscritos</span>
+            </div>
+        </div>
+        <div class="stat-card stat-purple">
+            <div class="stat-card-icon">✅</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.completed }}</span>
+                <span class="stat-card-label">Completados</span>
+            </div>
+        </div>
+        <div class="stat-card stat-magenta">
+            <div class="stat-card-icon">⚡</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.in_progress }}</span>
+                <span class="stat-card-label">En Progreso</span>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-card-icon">🎯</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.avg_progress }}%</span>
+                <span class="stat-card-label">Progreso General</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MIS CURSOS -->
+    <h2 class="section-title">Mis Cursos</h2>
+    {% if enrollments %}
+        <div class="my-courses-list">
+            {% for enrollment in enrollments %}
+            <div class="my-course-item">
+                <div class="my-course-cover" style="background: {{ enrollment.course.image_gradient or 'linear-gradient(135deg,#1a1a4e,#00f2fe)' }};"></div>
+                <div class="my-course-info">
+                    <h3>{{ enrollment.course.title }}</h3>
+                    <p style="color:var(--text-muted); font-size:0.95rem;">{{ enrollment.course.topics|length }} módulos · {{ enrollment.course.duration_hours }}h estimadas</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" style="width: {{ enrollment.progress }}%;"></div>
+                        </div>
+                        <span class="progress-label">{{ enrollment.progress | round(0) | int }}%</span>
+                    </div>
+                </div>
+                <div class="my-course-actions">
+                    <a href="{{ url_for('course.course_detail', course_id=enrollment.course.id) }}" class="btn-secondary" style="white-space:nowrap;">
+                        {% if enrollment.progress >= 100 %}Repasar{% elif enrollment.progress > 0 %}Continuar{% else %}Comenzar{% endif %}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state" style="margin-top:2rem;">
+            <h3>Aún no estás inscrito</h3>
+            <p>Explora el catálogo y empieza tu primer curso hoy.</p>
+            <a href="{{ url_for('course.list_courses') }}" class="btn-primary">Explorar Cursos</a>
+        </div>
+    {% endif %}
+
+    <!-- TRAYECTORIAS SUGERIDAS -->
+    <div style="margin-top:4rem;">
+        <div class="section-header">
+            <h2 class="section-title">Trayectorias Recomendadas</h2>
+            <a href="{{ url_for('main.roadmaps') }}" class="section-link">Ver todas →</a>
+        </div>
+        <p style="color:var(--text-muted); margin-top:-1.5rem; margin-bottom:2rem;">
+            Las trayectorias te guían paso a paso hacia una competencia específica del mercado.
+        </p>
+        <a href="{{ url_for('main.roadmaps') }}" class="btn-ghost" style="display:inline-block;">
+            🗺️ Ver Trayectorias de Competencia
+        </a>
+    </div>
+</section>
+{% endblock %}
