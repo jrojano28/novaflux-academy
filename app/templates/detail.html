@@ -1,15 +1,20 @@
 <!-- app/templates/detail.html -->
 {% extends 'base.html' %}
 
-{% block title %}{{ course.title }} - AntiGravity Academy{% endblock %}
+{% block title %}{{ course.title }} - NovaFlux Academy{% endblock %}
 
 {% block content %}
 <!-- PORTADA DEL CURSO -->
+{% if course.image_url %}
+<div class="course-hero" style="background: linear-gradient(to right, rgba(13, 17, 23, 0.92) 0%, rgba(13, 17, 23, 0.6) 100%), url('{{ course.image_url }}') no-repeat center center / cover;">
+{% else %}
 <div class="course-hero" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #0d1117 0%, #161b27 100%)' }};">
+{% endif %}
     <div class="course-hero-content">
         <div class="course-hero-meta">
             <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
             <span class="course-hero-duration">⏱ {{ course.duration_hours }} horas</span>
+            <span class="course-hero-price">🏷️ ${{ '%.2f'|format(course.price) }}</span>
         </div>
         <h1>{{ course.title }}</h1>
         <p>{{ course.description }}</p>
@@ -28,7 +33,7 @@
                 {% else %}
                     <form method="POST" action="{{ url_for('course.enroll', course_id=course.id) }}" style="display:inline;">
                         <button type="submit" class="btn-primary" id="enroll-btn">
-                            🚀 Inscribirme Gratis
+                            🚀 Inscribirme por ${{ '%.2f'|format(course.price) }}
                         </button>
                     </form>
                 {% endif %}
@@ -124,6 +129,18 @@
                             <div class="lesson-content-block {% if not first_lesson_rendered.value %}active{% set first_lesson_rendered.value = true %}{% endif %}" id="lesson-content-{{ content.id }}" data-lesson-id="{{ content.id }}">
                                 <div class="lesson-meta">{{ topic.title }}</div>
                                 <h1 class="lesson-title-display">{{ content.title }}</h1>
+                                
+                                {% if content.video_url %}
+                                <div class="lesson-video-wrapper">
+                                    <iframe src="{{ content.video_url }}" 
+                                            title="Video de la Lección" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                            allowfullscreen>
+                                    </iframe>
+                                </div>
+                                {% endif %}
+
                                 <div class="lesson-body-display">
                                     {{ content.body|safe }}
                                 </div>

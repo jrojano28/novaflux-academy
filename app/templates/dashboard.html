@@ -1,7 +1,7 @@
 <!-- app/templates/dashboard.html -->
 {% extends 'base.html' %}
 
-{% block title %}Mi Dashboard - AntiGravity Academy{% endblock %}
+{% block title %}Mi Dashboard - NovaFlux Academy{% endblock %}
 
 {% block content %}
 <section class="container dashboard-section">
@@ -153,8 +153,11 @@
                         {% for course in recommended_courses %}
                         <div class="course-card recommended-card">
                             <div class="course-cover recommended-cover" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #1a1a4e 0%, #00f2fe 100%)' }};">
-                                🚀
-                                <div class="recommended-badge-pos">
+                                {% if course.image_url %}
+                                    <img src="{{ course.image_url }}" alt="{{ course.title }}" class="course-cover-img">
+                                {% endif %}
+                                <span class="recommended-emoji" style="z-index: 2; position: relative;">🚀</span>
+                                <div class="recommended-badge-pos" style="z-index: 2;">
                                     <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
                                 </div>
                             </div>

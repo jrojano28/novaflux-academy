@@ -602,6 +602,26 @@ main {
     padding-bottom: 1.5rem;
 }
 
+.lesson-video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 1.5rem 0 2rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    background: #000;
+}
+
+.lesson-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
 .lesson-body-display {
     font-size: 1.15rem;
     color: #cbd5e1; /* slate-300 */
@@ -1006,6 +1026,21 @@ footer p {
     overflow: hidden;
 }
 
+.course-cover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: var(--transition);
+}
+
+.course-card:hover .course-cover-img {
+    transform: scale(1.05);
+}
+
 .course-cover-overlay {
     position: absolute;
     top: 1rem;
@@ -1014,6 +1049,7 @@ footer p {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 2;
 }
 
 .course-level-badge {
@@ -1058,6 +1094,7 @@ footer p {
     position: absolute;
     bottom: 1.2rem;
     right: 1.2rem;
+    z-index: 2;
 }
 
 .course-cover-icon svg {
@@ -3486,5 +3523,280 @@ footer p {
     50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.5)); }
     100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.2)); }
 }
+
+/* ═══ SISTEMA DE PRECIOS Y PLANES (PASO 5) ═══ */
+
+/* Tarjeta del Catálogo y Home: Fila de Precio */
+.course-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.course-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: var(--font-tech);
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+.course-price-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Detalle del Curso: Etiqueta de Precio en Hero */
+.course-hero-price {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-tech);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+}
+
+/* Sección de Planes y Suscripciones (Home) */
+.pricing-section {
+    margin-top: 6rem;
+    margin-bottom: 6rem;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+    align-items: stretch;
+}
+
+/* Tarjetas de Precios */
+.pricing-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    transition: var(--transition);
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Plan Destacado (Pro) */
+.pricing-card-featured {
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
+    background: linear-gradient(180deg, rgba(20, 16, 45, 0.7) 0%, rgba(13, 17, 30, 0.7) 100%);
+}
+
+.pricing-card-featured::before {
+    background: var(--primary-gradient);
+}
+
+.pricing-card-featured:hover {
+    border-color: var(--neon-purple);
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.25);
+}
+
+/* Badge Popular */
+.pricing-popular-badge {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: var(--primary-gradient);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+/* Cabecera de Tarjeta */
+.pricing-card-header {
+    margin-bottom: 2rem;
+}
+
+.pricing-icon {
+    font-size: 2.2rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.pricing-plan-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-tech);
+    color: var(--text-main);
+}
+
+.pricing-plan-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Bloque de Precio */
+.pricing-price-block {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 2rem;
+}
+
+.pricing-amount {
+    font-size: 3.2rem;
+    font-weight: 800;
+    font-family: var(--font-tech);
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.15));
+}
+
+.pricing-period {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-left: 0.25rem;
+}
+
+/* Lista de Características */
+.pricing-features {
+    list-style: none;
+    margin-bottom: 2.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.pricing-features li {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.pricing-features li.disabled {
+    color: rgba(255, 255, 255, 0.25);
+    text-decoration: line-through;
+}
+
+/* Botones de Planes */
+.btn-pricing {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: var(--font-tech);
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.btn-pricing-basic {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.btn-pricing-basic:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.btn-pricing-pro {
+    background: var(--primary-gradient);
+    color: #05070f;
+    border: none;
+    box-shadow: var(--glow-shadow-cyan);
+}
+
+.btn-pricing-pro:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 35px rgba(243, 85, 218, 0.4);
+    transform: scale(1.02);
+}
+
+.btn-pricing-premium {
+    background: linear-gradient(135deg, #10b981 0%, #00f2fe 100%);
+    color: #05070f;
+    border: none;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+}
+
+.btn-pricing-premium:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.4);
+    transform: scale(1.02);
+}
+
+/* Adaptación responsive para la cuadrícula de precios */
+@media (max-width: 768px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .pricing-card {
+        padding: 2rem 1.5rem;
+    }
+}
+
+/* Estilos para Integrantes del Footer (Paso 6) */
+.footer-members {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.footer-members p strong {
+    color: var(--neon-cyan);
+    font-family: var(--font-tech);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 0.5rem;
+}
+
 
 

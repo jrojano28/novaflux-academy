@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AntiGravity Academy - Plataforma de educación tecnológica de élite. Aprende algoritmos, IA y desarrollo de software de vanguardia.">
-    <title>{% block title %}AntiGravity Academy{% endblock %}</title>
+    <meta name="description" content="NovaFlux Academy - Plataforma de educación tecnológica de élite. Aprende algoritmos, IA y desarrollo de software de vanguardia.">
+    <title>{% block title %}NovaFlux Academy{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
 <header>
     <nav class="nav-container">
-        <a href="{{ url_for('main.home') }}" class="logo">AntiGravity</a>
+        <a href="{{ url_for('main.home') }}" class="logo">NovaFlux Academy</a>
 
         <!-- Botón Hamburguesa Responsivo -->
         <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú de navegación">
@@ -74,7 +74,7 @@
 <footer>
     <div class="footer-content">
         <div class="footer-brand">
-            <span class="logo logo-footer">AntiGravity</span>
+            <span class="logo logo-footer">NovaFlux Academy</span>
             <p>Educación tecnológica de élite para la próxima generación.</p>
         </div>
         <div class="footer-links">
@@ -84,7 +84,10 @@
                 <a href="{{ url_for('auth.register') }}">Crear Cuenta</a>
             {% endif %}
         </div>
-        <p class="footer-copy">&copy; 2026 AntiGravity. Todos los derechos reservados.</p>
+        <div class="footer-members">
+            <p><strong>Integrantes:</strong> Juan Rojano — Marleinis Orozco — Luis Bustamante — Yulesis Carranza</p>
+        </div>
+        <p class="footer-copy">&copy; 2026 NovaFlux Academy. Todos los derechos reservados.</p>
     </div>
 </footer>
 

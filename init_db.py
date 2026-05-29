@@ -17,7 +17,7 @@ with app.app_context():
         curso_demo = Course(
             title="Introducción a la Inteligencia Artificial",
             description="Explora los fundamentos de la inteligencia artificial, el aprendizaje automático y cómo los sistemas resuelven problemas complejos.",
-            image_url="/static/images/course_placeholder.jpg"
+            image_url="https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80"
         )
         db.session.add(curso_demo)
         db.session.commit()
