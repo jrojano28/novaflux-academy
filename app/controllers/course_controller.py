@@ -62,15 +62,32 @@ def course_detail(course_id):
                         lock_reason = f"Este curso está BLOQUEADO. Debes completar primero '{prev_rc.course.title}' de la trayectoria '{ur.roadmap.title}'."
                         break
 
+    # Calcular lecciones desbloqueadas secuencialmente
+    all_course_contents = []
+    for t in sorted(course.topics, key=lambda x: x.order):
+        for c in sorted(t.contents, key=lambda x: x.order):
+            all_course_contents.append(c)
+
+    unlocked_lesson_ids = []
+    for i, c in enumerate(all_course_contents):
+        if i == 0:
+            unlocked_lesson_ids.append(c.id)
+        else:
+            prev_c = all_course_contents[i-1]
+            if prev_c.id in completed_lesson_ids:
+                unlocked_lesson_ids.append(c.id)
+
     return render_template(
         'detail.html',
         course=course,
         is_enrolled=is_enrolled,
         enrollment=enrollment,
         completed_lesson_ids=completed_lesson_ids,
+        unlocked_lesson_ids=unlocked_lesson_ids,
         is_locked=is_locked,
         lock_reason=lock_reason
     )
+
 
 
 @course_bp.route('/<int:course_id>/enroll', methods=['POST'])
@@ -90,7 +107,6 @@ def enroll(course_id):
     enrollment = Enrollment(user_id=user_id, course_id=course_id, progress=0.0)
     db.session.add(enrollment)
 
-<<<<<<< Updated upstream
     # Registrar actividad
     from app.models.user import ActivityLog
     log = ActivityLog(
@@ -109,99 +125,31 @@ def enroll(course_id):
 @login_required
 def toggle_complete_lesson(content_id):
     """Alterna el estado de finalización de una lección para el usuario actual y recalcula el progreso del curso."""
-    from app.models.topic import Topic, Content, UserLessonProgress
-    from app.models.user import ActivityLog
-
+    from app.services.course_service import CourseService
     user_id = session['user_id']
-    content = Content.query.get_or_404(content_id)
-    course_id = content.topic.course_id
-    course_title = content.topic.course.title
-
-    # Buscar si ya está completada
-    progress_record = UserLessonProgress.query.filter_by(user_id=user_id, content_id=content_id).first()
-
-    if progress_record:
-        # Desmarcar completado
-        db.session.delete(progress_record)
-        action_msg = "Lección desmarcada como completada"
-        activity_desc = f"Desmarcaste la lección '{content.title}' del curso '{course_title}'."
-        activity_type = "uncomplete_lesson"
-        is_completed = False
+    success, result = CourseService.toggle_lesson_completion(user_id, content_id)
+    if success:
+        return jsonify(result)
     else:
-        # Marcar completado
-        new_progress = UserLessonProgress(user_id=user_id, content_id=content_id)
-        db.session.add(new_progress)
-        action_msg = "Lección marcada como completada"
-        activity_desc = f"Completaste la lección '{content.title}' del curso '{course_title}'."
-        activity_type = "complete_lesson"
-        is_completed = True
+        return jsonify(result), 400
 
-    db.session.commit()
 
-    # Guardar en bitácora de actividad
-    log = ActivityLog(user_id=user_id, activity_type=activity_type, description=activity_desc)
-    db.session.add(log)
+@course_bp.route('/run-code', methods=['POST'])
+def run_code():
+    """Ejecuta código Python básico enviado desde el Playground (AJAX)."""
+    from app.services.course_service import CourseService
+    from flask import request
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({
+            'success': False,
+            'output': '💡 Debes iniciar sesión e inscribirte en el curso para ejecutar código en tiempo real.'
+        }), 200
 
-    # Recalcular progreso general del curso
-    course_lessons = Content.query.join(Topic).filter(Topic.course_id == course_id).all()
-    total_lessons = len(course_lessons)
+    data = request.get_json() or {}
+    code = data.get('code', '')
 
-    if total_lessons > 0:
-        lesson_ids = [l.id for l in course_lessons]
-        completed_count = UserLessonProgress.query.filter(
-            UserLessonProgress.user_id == user_id,
-            UserLessonProgress.content_id.in_(lesson_ids)
-        ).count()
-        progress_percentage = (completed_count / total_lessons) * 100.0
-    else:
-        progress_percentage = 0.0
+    output = CourseService.execute_playground_code(code)
+    return jsonify({'success': True, 'output': output})
 
-    # Actualizar tabla de inscripciones (Enrollment)
-    enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-    course_newly_completed = False
 
-    if enrollment:
-        old_progress = enrollment.progress
-        enrollment.progress = round(progress_percentage, 1)
-
-        # Si antes no estaba completo y ahora sí
-        if enrollment.progress >= 100.0 and old_progress < 100.0:
-            course_newly_completed = True
-            course_log = ActivityLog(
-                user_id=user_id,
-                activity_type='complete_course',
-                description=f"¡Has completado con éxito el curso '{course_title}'!"
-            )
-            db.session.add(course_log)
-
-        db.session.commit()
-
-    return jsonify({
-        'success': True,
-        'message': action_msg,
-        'completed': is_completed,
-        'progress': enrollment.progress if enrollment else round(progress_percentage, 1),
-        'course_completed': (enrollment.progress >= 100.0) if enrollment else (progress_percentage >= 100.0),
-        'course_newly_completed': course_newly_completed
-    })
-=======
-        success, result = CourseService.toggle_lesson_completion(user_id, content_id)
-        if success:
-            return jsonify(result)
-        else:
-            return jsonify(result), 400
-
-    @staticmethod
-    def run_code():
-        """Ejecuta código Python básico enviado desde el Playground (AJAX)."""
-        from flask import request
-        user_id = session.get('user_id')
-        if not user_id:
-            return jsonify({'success': False, 'output': 'Debes iniciar sesión para ejecutar código.'}), 401
-
-        data = request.get_json() or {}
-        code = data.get('code', '')
-
-        output = CourseService.execute_playground_code(code)
-        return jsonify({'success': True, 'output': output})
->>>>>>> Stashed changes

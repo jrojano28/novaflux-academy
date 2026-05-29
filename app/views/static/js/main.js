@@ -34,7 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Actualizar el estado de los botones de navegación secuencial
             updateNavigationButtons(index);
+
+            // Actualizar requisitos de la lección activa
+            if (typeof updateLessonRequirements === 'function') {
+                setTimeout(() => {
+                    updateLessonRequirements();
+                }, 50);
+            }
         }
+
 
         // Función para actualizar y configurar los botones "Anterior" y "Siguiente"
         function updateNavigationButtons(currentIndex) {
@@ -303,6 +311,153 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ── GESTIÓN DINÁMICA DE REQUISITOS DE LECCIÓN (FASE 3) ──
+    function getActiveLessonBlock() {
+        return document.querySelector('.lesson-content-block.active');
+    }
+
+    function updateLessonRequirements() {
+        const activeBlock = getActiveLessonBlock();
+        if (!activeBlock) return;
+
+        const lessonId = activeBlock.getAttribute('data-lesson-id');
+        const completeBtn = activeBlock.querySelector('.btn-toggle-complete');
+        if (!completeBtn) return;
+
+        // Buscar componentes interactivos en esta lección
+        const hasQuiz = activeBlock.querySelector('.interactive-quiz') !== null;
+        const hasPractice = activeBlock.querySelector('.interactive-practice') !== null;
+        const hasSimulator = activeBlock.querySelector('.interactive-simulator') !== null;
+
+        // Si no hay ningún componente interactivo, la lección está lista para completar directamente
+        if (!hasQuiz && !hasPractice && !hasSimulator) {
+            completeBtn.disabled = false;
+            completeBtn.classList.remove('locked-btn');
+            const existingCard = activeBlock.querySelector('.lesson-requirements-card');
+            if (existingCard) existingCard.remove();
+            return;
+        }
+
+        // Obtener estado de completado desde localStorage
+        const quizPassed = localStorage.getItem(`novaflux_lesson_${lessonId}_quiz_passed`) === 'true';
+        const practicePassed = localStorage.getItem(`novaflux_lesson_${lessonId}_practice_passed`) === 'true';
+        const simulatorPassed = localStorage.getItem(`novaflux_lesson_${lessonId}_simulator_passed`) === 'true';
+
+        // Generar o actualizar tarjeta de requisitos
+        let reqCard = activeBlock.querySelector('.lesson-requirements-card');
+        if (!reqCard) {
+            reqCard = document.createElement('div');
+            reqCard.className = 'lesson-requirements-card';
+            // Insertar arriba del botón de completado
+            const completionBox = activeBlock.querySelector('.lesson-completion-box');
+            if (completionBox) {
+                completionBox.insertBefore(reqCard, completionBox.firstChild);
+            }
+        }
+
+        // Armar lista de tareas en HTML
+        let itemsHtml = '';
+        let allMet = true;
+
+        if (hasPractice) {
+            const metClass = practicePassed ? 'requirement-item met' : 'requirement-item';
+            const check = practicePassed ? '✓' : '○';
+            itemsHtml += `
+                <li class="${metClass}">
+                    <div class="requirement-checkbox">${check}</div>
+                    <span>✍️ Completa la práctica de código manual</span>
+                </li>
+            `;
+            if (!practicePassed) allMet = false;
+        }
+
+        if (hasQuiz) {
+            const metClass = quizPassed ? 'requirement-item met' : 'requirement-item';
+            const check = quizPassed ? '✓' : '○';
+            itemsHtml += `
+                <li class="${metClass}">
+                    <div class="requirement-checkbox">${check}</div>
+                    <span>📝 Aprueba el quiz de conocimiento</span>
+                </li>
+            `;
+            if (!quizPassed) allMet = false;
+        }
+
+        if (hasSimulator) {
+            const metClass = simulatorPassed ? 'requirement-item met' : 'requirement-item';
+            const check = simulatorPassed ? '✓' : '○';
+            itemsHtml += `
+                <li class="${metClass}">
+                    <div class="requirement-checkbox">${check}</div>
+                    <span>🧬 Realiza la simulación evolutiva interactiva</span>
+                </li>
+            `;
+            if (!simulatorPassed) allMet = false;
+        }
+
+        // Actualizar la interfaz de requisitos
+        if (allMet) {
+            reqCard.style.borderColor = 'var(--neon-green)';
+            reqCard.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.15)';
+            reqCard.innerHTML = `
+                <h4 style="color: var(--neon-green); border-color: rgba(16,185,129,0.15)">🏆 ¡Todos los requisitos cumplidos!</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.5rem 0 0 0;">Ya puedes marcar la lección como completada para desbloquear el siguiente paso.</p>
+            `;
+            completeBtn.disabled = false;
+            completeBtn.classList.remove('locked-btn');
+            completeBtn.style.animation = 'pulseLock 2s infinite';
+        } else {
+            reqCard.style.borderColor = 'var(--neon-cyan)';
+            reqCard.style.boxShadow = '0 0 20px rgba(0, 242, 254, 0.08)';
+            reqCard.innerHTML = `
+                <h4>📋 Requisitos para completar:</h4>
+                <ul class="requirements-list">
+                    ${itemsHtml}
+                </ul>
+            `;
+            completeBtn.disabled = true;
+            completeBtn.classList.add('locked-btn');
+            completeBtn.style.animation = 'none';
+        }
+    }
+
+
+
+    // Modificación ligera en el toggle_complete para refrescar la página tras guardar en BD
+    if (toggleCompleteButtons.length > 0) {
+        toggleCompleteButtons.forEach(button => {
+            // Reemplazar event listener clonando el botón para limpiar binds previos
+            const newBtn = button.cloneNode(true);
+            button.parentNode.replaceChild(newBtn, button);
+            
+            newBtn.addEventListener('click', () => {
+                const contentId = newBtn.getAttribute('data-content-id');
+                const isAlreadyCompleted = newBtn.classList.contains('completed');
+                
+                fetch(`/courses/lessons/${contentId}/toggle-complete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showFlashMessage(data.completed ? '🎉 ¡Lección completada y guardada!' : 'Lección desmarcada.', 'success');
+                        
+                        // Si se acaba de completar, recargamos el navegador para que el backend compute y desbloquee la siguiente lección secuencial
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al togglear lección:', error);
+                });
+            });
+        });
+    }
+
     // ── PLAYGROUND DE PYTHON SIMPLE (AJAX) ──
     document.querySelectorAll('.btn-playground-run').forEach(button => {
         button.addEventListener('click', () => {
@@ -311,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const consoleOutput = container.querySelector('.playground-console-output');
             const code = editor.value;
 
-            consoleOutput.textContent = "Ejecutando código en servidor...";
+            consoleOutput.textContent = "Ejecutando ejemplo resuelto...";
 
             fetch('/courses/run-code', {
                 method: 'POST',
@@ -330,14 +485,93 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── QUIZZES DINÁMICOS E INTERACTIVOS ──
+    // ── SECCIÓN 2: PRÁCTICA DE ESCRITURA DE CÓDIGO MANUAL ──
+    document.querySelectorAll('.btn-practice-run').forEach(button => {
+        button.addEventListener('click', () => {
+            const container = button.closest('.interactive-practice');
+            const editor = container.querySelector('.practice-editor');
+            const consoleOutput = container.querySelector('.playground-console-output');
+            const statusBox = container.querySelector('.practice-validation-status');
+            const code = editor.value;
+
+            const expectedOutput = container.getAttribute('data-expected-output') || '';
+            const expectedCode = container.getAttribute('data-expected-code') || '';
+            const lessonBlock = container.closest('.lesson-content-block');
+            const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
+
+            consoleOutput.textContent = "Ejecutando y validando tu código...";
+            statusBox.className = "practice-validation-status pending";
+            statusBox.innerHTML = "⏳ Validando...";
+
+            fetch('/courses/run-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                consoleOutput.textContent = data.output;
+
+                // Si no está autenticado, la salida de sandbox informará la advertencia
+                if (!data.success || data.output.includes("💡 Debes iniciar sesión")) {
+                    statusBox.className = "practice-validation-status error";
+                    statusBox.innerHTML = "❌ Inicia sesión";
+                    return;
+                }
+
+                // ── MÓDULO DE VALIDACIÓN AUTOMÁTICA SIMPLE ──
+                let isCodeValid = true;
+                let errorDetails = '';
+
+                // 1. Validar presencia de palabras clave requeridas
+                if (expectedCode && !code.toLowerCase().includes(expectedCode.toLowerCase())) {
+                    isCodeValid = false;
+                    errorDetails = `Debe incluir la instrucción o palabra clave '${expectedCode}'.`;
+                }
+
+                // 2. Validar salida en consola esperada
+                if (expectedOutput && !data.output.toLowerCase().includes(expectedOutput.toLowerCase())) {
+                    isCodeValid = false;
+                    errorDetails = `La consola no contiene la salida esperada '${expectedOutput}'.`;
+                }
+
+                if (isCodeValid) {
+                    statusBox.className = "practice-validation-status success";
+                    statusBox.innerHTML = "🎉 ¡Ejercicio completado!";
+                    showFlashMessage('🎉 ¡Excelente! Práctica completada con éxito.', 'success');
+                    
+                    // Guardar progreso localmente
+                    localStorage.setItem(`novaflux_lesson_${lessonId}_practice_passed`, 'true');
+                    updateLessonRequirements();
+                } else {
+                    statusBox.className = "practice-validation-status error";
+                    statusBox.innerHTML = `❌ Fallido: ${errorDetails}`;
+                }
+            })
+            .catch(err => {
+                consoleOutput.textContent = "Error de conexión: " + err;
+                statusBox.className = "practice-validation-status error";
+                statusBox.innerHTML = "❌ Error de servidor";
+            });
+        });
+    });
+
+    // ── QUIZZES DINÁMICOS E INTERACTIVOS OBLIGATORIOS ──
     document.querySelectorAll('.interactive-quiz').forEach(quiz => {
         const options = quiz.querySelectorAll('.quiz-option');
         const verifyBtn = quiz.querySelector('.btn-quiz-verify');
         const feedback = quiz.querySelector('.quiz-feedback');
+        const lessonBlock = quiz.closest('.lesson-content-block');
+        const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
+
+        // Almacenar la explicación general del quiz
+        const explanationText = quiz.getAttribute('data-explanation') || 'La respuesta correcta se alinea con los fundamentos teóricos expuestos en el módulo.';
 
         options.forEach(opt => {
-            opt.addEventListener('click', () => {
+            opt.addEventListener('click', (e) => {
+                // Evitar triggers múltiples
                 options.forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
                 const radio = opt.querySelector('input[type="radio"]');
@@ -346,8 +580,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (verifyBtn) {
-            verifyBtn.addEventListener('click', () => {
-                const selectedOpt = quiz.querySelector('.quiz-option.selected');
+            // Limpiar binds anteriores
+            const newVerifyBtn = verifyBtn.cloneNode(true);
+            verifyBtn.parentNode.replaceChild(newVerifyBtn, verifyBtn);
+
+            newVerifyBtn.addEventListener('click', () => {
+                let selectedOpt = quiz.querySelector('.quiz-option.selected');
+                
+                // Búsqueda defensiva por si hicieron clic directo en el input radio nativo
+                if (!selectedOpt) {
+                    const checkedRadio = quiz.querySelector('input[type="radio"]:checked');
+                    if (checkedRadio) {
+                        selectedOpt = checkedRadio.closest('.quiz-option');
+                        if (selectedOpt) selectedOpt.classList.add('selected');
+                    }
+                }
+
                 if (!selectedOpt) {
                     feedback.style.display = 'flex';
                     feedback.className = 'quiz-feedback incorrect';
@@ -358,13 +606,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isCorrect = selectedOpt.getAttribute('data-correct') === 'true';
                 feedback.style.display = 'flex';
 
+                // Remover cualquier caja de explicación previa
+                const existingExplanation = quiz.querySelector('.quiz-explanation-box');
+                if (existingExplanation) existingExplanation.remove();
+
                 if (isCorrect) {
                     feedback.className = 'quiz-feedback correct';
                     feedback.innerHTML = '🎉 ¡Correcto! Excelente respuesta.';
-                    showFlashMessage('🎉 ¡Excelente! Práctica de quiz completada.', 'success');
+                    showFlashMessage('🎉 ¡Excelente! Cuestionario aprobado.', 'success');
+                    
+                    // Guardar progreso localmente
+                    localStorage.setItem(`novaflux_lesson_${lessonId}_quiz_passed`, 'true');
+                    updateLessonRequirements();
                 } else {
                     feedback.className = 'quiz-feedback incorrect';
-                    feedback.innerHTML = '❌ Incorrecto. ¡Vuelve a intentarlo!';
+                    feedback.innerHTML = '❌ Incorrecto. ¡Inténtalo de nuevo!';
+                    
+                    // Inyectar explicación amigable del error para guiar al estudiante
+                    const expBox = document.createElement('div');
+                    expBox.className = 'quiz-explanation-box';
+                    expBox.innerHTML = `
+                        <div class="quiz-explanation-title">💡 Explicación del Concepto:</div>
+                        <p>${explanationText}</p>
+                    `;
+                    quiz.appendChild(expBox);
+
+                    // Guardar como no aprobado en localStorage
+                    localStorage.setItem(`novaflux_lesson_${lessonId}_quiz_passed`, 'false');
+                    updateLessonRequirements();
                 }
             });
         }
@@ -397,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentGen++;
             genCounter.textContent = currentGen;
 
-            // Simulación simplificada client-side
+            // Simulación client-side
             population.sort((a,b) => b.fitness - a.fitness);
             let parents = [population[0].dna, population[1].dna];
 
@@ -440,6 +709,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             maxFitnessSpan.textContent = population[0].fitness;
+
+            const lessonBlock = evolverBtn.closest('.lesson-content-block');
+            const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
+
+            // Al realizar al menos una iteración evolutiva, consideramos interactuado el simulador
+            localStorage.setItem(`novaflux_lesson_${lessonId}_simulator_passed`, 'true');
+            updateLessonRequirements();
 
             if (population[0].dna === 'BBBB') {
                 showFlashMessage('🏆 ¡Evolución completada! Has alcanzado el ADN óptimo: BBBB', 'success');
@@ -500,6 +776,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             showFlashMessage(`👑 ¡Ganador del torneo: ${winner.dna}!`, 'success');
+
+            const lessonBlock = runTournamentBtn.closest('.lesson-content-block');
+            const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
+            
+            // Marcar simulador completado al interactuar
+            localStorage.setItem(`novaflux_lesson_${lessonId}_simulator_passed`, 'true');
+            updateLessonRequirements();
         });
     }
 
@@ -560,7 +843,19 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 showFlashMessage('Sin mutaciones en esta tirada azarosa.', 'info');
             }
+
+            const lessonBlock = runMutationBtn.closest('.lesson-content-block');
+            const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
+            
+            // Marcar simulador completado al interactuar
+            localStorage.setItem(`novaflux_lesson_${lessonId}_simulator_passed`, 'true');
+            updateLessonRequirements();
         });
     }
->>>>>>> Stashed changes:app/static/js/main.js
+
+    // Inicializar requirements por primera vez al finalizar DOMContentLoaded
+    setTimeout(() => {
+        updateLessonRequirements();
+    }, 150);
 });
+

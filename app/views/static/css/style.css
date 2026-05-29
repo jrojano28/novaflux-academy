@@ -3949,5 +3949,240 @@ footer p {
 .note-box.purple .note-box-title { color: var(--neon-purple); }
 .note-box.magenta .note-box-title { color: var(--neon-magenta); }
 
+/* --- PHASE 3: INTERACTIVE PRACTICE & SEQUENTIAL LOCKING STYLES --- */
 
->>>>>>> Stashed changes:app/static/css/style.css
+/* Requisitos para completar lección */
+.lesson-requirements-card {
+    background: rgba(13, 17, 30, 0.95);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin: 3rem auto 1.5rem auto;
+    max-width: 500px;
+    text-align: left;
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.08);
+    backdrop-filter: blur(12px);
+    animation: slideUp 0.5s ease;
+}
+
+.lesson-requirements-card h4 {
+    font-family: var(--font-tech);
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 0.5rem;
+}
+
+.requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.requirement-item {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.requirement-item.met {
+    color: var(--neon-green);
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+
+.requirement-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: transparent;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.requirement-item.met .requirement-checkbox {
+    border-color: var(--neon-green);
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    transform: scale(1.1);
+}
+
+/* Botón Bloqueado / Deshabilitado */
+.btn-toggle-complete.locked-btn {
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    filter: grayscale(1) !important;
+}
+
+/* Sección 2: Práctica de escritura de código manual */
+.interactive-practice {
+    background: rgba(13, 17, 30, 0.75);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 3rem 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+}
+
+.practice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.25rem;
+}
+
+.practice-header h4 {
+    font-family: var(--font-tech);
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.practice-badge {
+    background: rgba(0, 242, 254, 0.12);
+    color: var(--neon-cyan);
+    font-family: var(--font-tech);
+    font-size: 0.72rem;
+    font-weight: bold;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.practice-instructions {
+    font-size: 1.05rem;
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.practice-instructions code {
+    background: rgba(0, 242, 254, 0.1);
+    color: var(--neon-cyan);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-family: var(--font-tech);
+}
+
+.practice-editor-container {
+    background: #020408;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 0.5rem;
+    position: relative;
+    margin-bottom: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.practice-editor-container:focus-within {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+}
+
+.practice-editor {
+    width: 100%;
+    height: 120px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--neon-cyan);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.05rem;
+    resize: vertical;
+    padding: 0.8rem;
+    line-height: 1.5;
+}
+
+.practice-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.practice-validation-status {
+    font-family: var(--font-tech);
+    font-size: 0.92rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.practice-validation-status.pending {
+    color: var(--text-muted);
+}
+
+.practice-validation-status.success {
+    color: var(--neon-green);
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.practice-validation-status.error {
+    color: #f43f5e;
+    text-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+}
+
+/* Explicaciones de los Quizzes en caso de error */
+.quiz-explanation-box {
+    background: rgba(244, 63, 94, 0.05);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #fca5a5;
+    animation: slideUp 0.35s ease;
+}
+
+.quiz-explanation-title {
+    font-family: var(--font-tech);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    color: #f87171;
+}
+
+/* Timeline/Roadmap unlock styles */
+.lesson-item.locked-item button {
+    background: rgba(255,255,255,0.01) !important;
+    border: 1px dashed rgba(255,255,255,0.05) !important;
+}
+
+.lesson-item.locked-item button span {
+    color: var(--text-muted) !important;
+}
+
+

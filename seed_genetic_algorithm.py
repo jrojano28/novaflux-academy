@@ -72,42 +72,72 @@ def seed_data():
     A diferencia de un programa secuencial tradicional rígido, un sistema inteligente de optimización busca dinámicamente y se adapta usando heurísticas guiadas.
 </div>
 
-<!-- PLAYGROUND DE PYTHON 1 -->
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- SECCIÓN 1: EJEMPLO YA RESUELTO -->
 <div class="interactive-playground">
     <div class="playground-header">
-        <h4>💻 Laboratorio Práctico: Variables y Salidas en Python</h4>
-        <span class="playground-badge">Python Básico</span>
+        <h4>💻 Sección 1: Ejemplo Resuelto (Lectura)</h4>
+        <span class="playground-badge">Variables y Salidas</span>
     </div>
     <div class="playground-editor-container">
-        <textarea class="playground-editor"># Crea una variable para tu puntuación inteligente
+        <textarea class="playground-editor" readonly># Un ejemplo simple de salida en consola
 score = 100
-print("Mi puntuación en AntiGravity es:", score)</textarea>
+print("Mi puntuación inicial en AntiGravity es:", score)</textarea>
     </div>
     <div class="playground-actions">
-        <button class="btn-primary btn-playground-run">Ejecutar Código →</button>
+        <button class="btn-primary btn-playground-run">▶ Ejecutar Ejemplo</button>
     </div>
     <div class="playground-console-card">
         <div class="playground-console-header">🐚 Consola de Salida:</div>
-        <pre class="playground-console-output">Haz clic en 'Ejecutar Código' para ver la salida aquí...</pre>
+        <pre class="playground-console-output">Haz clic en 'Ejecutar Ejemplo' para ver el resultado...</pre>
     </div>
 </div>
 
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- SECCIÓN 2: EJERCICIO PRÁCTICO PARA EL ESTUDIANTE -->
+<div class="interactive-practice" data-expected-output="antigravity" data-expected-code="print">
+    <div class="practice-header">
+        <h4>✍️ Sección 2: Práctica de escritura de código manual</h4>
+        <span class="practice-badge">Tu Turno</span>
+    </div>
+    <div class="practice-instructions">
+        <strong>Instrucciones:</strong> Escribe una instrucción <code>print</code> que muestre en pantalla la palabra <code>"AntiGravity"</code> o tu nombre.
+    </div>
+    <div class="practice-editor-container">
+        <textarea class="practice-editor" placeholder="# Escribe aquí tu código manualmente..."></textarea>
+    </div>
+    <div class="practice-actions">
+        <button class="btn-primary btn-practice-run">⚡ Ejecutar y Validar</button>
+        <div class="practice-validation-status pending">
+            <span>⏳ Pendiente de validación</span>
+        </div>
+    </div>
+    <div class="playground-console-card">
+        <div class="playground-console-header">🐚 Consola de Salida de Práctica:</div>
+        <pre class="playground-console-output">Escribe tu código y pulsa 'Ejecutar y Validar'...</pre>
+    </div>
+</div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
 <!-- QUIZ 1 -->
-<div class="interactive-quiz">
-    <div class="quiz-header">📝 Mini Reto: Comprueba lo aprendido</div>
+<div class="interactive-quiz" data-explanation="La Inteligencia Artificial busca emular capacidades cognitivas superiores como el aprendizaje de patrones de datos, el razonamiento y la toma de decisiones autónomas en entornos complejos.">
+    <div class="quiz-header">📝 Sección 3: Quiz Obligatorio</div>
     <div class="quiz-question">¿Cuál es el objetivo primordial de la Inteligencia Artificial (IA)?</div>
     <div class="quiz-options">
         <div class="quiz-option" data-correct="false">
             <input type="radio" name="quiz-ia-opt" id="opt-ia-1">
-            <span class="quiz-option-label">A) Crear procesadores de texto más rápidos</span>
+            <span class="quiz-option-label">A) Crear procesadores de texto más rápidos para ofimática.</span>
         </div>
         <div class="quiz-option" data-correct="true">
             <input type="radio" name="quiz-ia-opt" id="opt-ia-2">
-            <span class="quiz-option-label">B) Construir sistemas capaces de realizar tareas complejas imitando procesos cognitivos humanos ✅</span>
+            <span class="quiz-option-label">B) Construir sistemas informáticos capaces de realizar tareas cognitivas complejas imitando procesos cognitivos humanos. ✅</span>
         </div>
         <div class="quiz-option" data-correct="false">
             <input type="radio" name="quiz-ia-opt" id="opt-ia-3">
-            <span class="quiz-option-label">C) Aumentar la velocidad de almacenamiento en disco</span>
+            <span class="quiz-option-label">C) Reducir el almacenamiento en disco de las computadoras hogareñas.</span>
         </div>
     </div>
     <div class="quiz-footer">
@@ -120,6 +150,7 @@ print("Mi puntuación en AntiGravity es:", score)</textarea>
         db.session.add(c_intro_1)
         db.session.commit()
         print(f"[OK] Curso 'Intro IA' configurado con éxito.")
+
 
 
         # ─── CURSO DE ALGORITMOS GENÉTICOS (9 MÓDULOS) ──────────────────────
@@ -151,29 +182,59 @@ print("Mi puntuación en AntiGravity es:", score)</textarea>
 <h3>¿Por qué Optimizar?</h3>
 <p>En lugar de una búsqueda por fuerza bruta a ciegas, requerimos algoritmos metaheurísticos guiados que exploren inteligentemente el espacio de búsqueda. Los <strong>Algoritmos Genéticos</strong> son, precisamente, una de las técnicas más robustas e inteligentes dentro de este ecosistema.</p>
 
-<!-- PLAYGROUND DE PYTHON 2 -->
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- SECCIÓN 1: EJEMPLO YA RESUELTO -->
 <div class="interactive-playground">
     <div class="playground-header">
-        <h4>💻 Laboratorio Práctico: Iteraciones en Python</h4>
+        <h4>💻 Sección 1: Ejemplo Resuelto (Lectura)</h4>
         <span class="playground-badge">Bucles Simples</span>
     </div>
     <div class="playground-editor-container">
-        <textarea class="playground-editor"># Un bucle simple que simula 5 iteraciones evolutivas
-for gen in range(1, 6):
+        <textarea class="playground-editor" readonly># Un bucle simple que simula 3 generaciones evolutivas
+for gen in range(1, 4):
     print("Evaluando Generación:", gen)</textarea>
     </div>
     <div class="playground-actions">
-        <button class="btn-primary btn-playground-run">Ejecutar Código →</button>
+        <button class="btn-primary btn-playground-run">▶ Ejecutar Ejemplo</button>
     </div>
     <div class="playground-console-card">
         <div class="playground-console-header">🐚 Consola de Salida:</div>
-        <pre class="playground-console-output">Haz clic en 'Ejecutar Código' para ver la salida aquí...</pre>
+        <pre class="playground-console-output">Haz clic en 'Ejecutar Ejemplo' para ver el resultado...</pre>
     </div>
 </div>
 
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- SECCIÓN 2: EJERCICIO PRÁCTICO PARA EL ESTUDIANTE -->
+<div class="interactive-practice" data-expected-output="3" data-expected-code="for">
+    <div class="practice-header">
+        <h4>✍️ Sección 2: Práctica de escritura de código manual</h4>
+        <span class="practice-badge">Tu Turno</span>
+    </div>
+    <div class="practice-instructions">
+        <strong>Instrucciones:</strong> Escribe un bucle <code>for</code> que itere del <code>1</code> al <code>3</code> (utilizando <code>range(1, 4)</code>) e imprima cada valor con <code>print()</code>.
+    </div>
+    <div class="practice-editor-container">
+        <textarea class="practice-editor" placeholder="# Escribe tu bucle for manualmente aquí..."></textarea>
+    </div>
+    <div class="practice-actions">
+        <button class="btn-primary btn-practice-run">⚡ Ejecutar y Validar</button>
+        <div class="practice-validation-status pending">
+            <span>⏳ Pendiente de validación</span>
+        </div>
+    </div>
+    <div class="playground-console-card">
+        <div class="playground-console-header">🐚 Consola de Salida de Práctica:</div>
+        <pre class="playground-console-output">Escribe tu código y pulsa 'Ejecutar y Validar'...</pre>
+    </div>
+</div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
 <!-- QUIZ 2 -->
-<div class="interactive-quiz">
-    <div class="quiz-header">📝 Mini Reto: Optimización</div>
+<div class="interactive-quiz" data-explanation="La fuerza bruta explora todas las combinaciones a ciegas. En problemas reales medianos o grandes, el número de combinaciones es tan inmenso (crecimiento exponencial) que una supercomputadora tardaría miles de años en evaluarlas todas. Por eso usamos optimización inteligente.">
+    <div class="quiz-header">📝 Sección 3: Quiz Obligatorio</div>
     <div class="quiz-question">¿Por qué no usamos la fuerza bruta para resolver problemas de optimización complejos de la vida real?</div>
     <div class="quiz-options">
         <div class="quiz-option" data-correct="true">
@@ -182,7 +243,7 @@ for gen in range(1, 6):
         </div>
         <div class="quiz-option" data-correct="false">
             <input type="radio" name="quiz-opt-2" id="opt-2-2">
-            <span class="quiz-option-label">B) Porque la fuerza bruta solo sirve para números decimales.</span>
+            <span class="quiz-option-label">B) Porque la fuerza bruta solo sirve para computadoras cuánticas avanzadas.</span>
         </div>
     </div>
     <div class="quiz-footer">
@@ -216,6 +277,8 @@ for gen in range(1, 6):
     <div class="note-box-title">🧬 Evolución Digital</div>
     La población inicial se compone de individuos generados al azar. Mediante Selección (picks), Cruce (combinación) y Mutación (cambios aleatorios), la población evoluciona hacia la solución óptima.
 </div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
 
 <!-- SIMULACIÓN VISUAL EVOLUCIÓN DE ADN -->
 <div class="interactive-simulator">
@@ -257,8 +320,35 @@ for gen in range(1, 6):
         </div>
     </div>
 </div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- QUIZ 3 -->
+<div class="interactive-quiz" data-explanation="La función fitness es el único operador que mide y califica la aptitud de los individuos (soluciones candidatas) respecto al objetivo del problema. A mayor fitness, mayor probabilidad de supervivencia.">
+    <div class="quiz-header">📝 Sección 3: Quiz Obligatorio</div>
+    <div class="quiz-question">¿Qué componente de un algoritmo genético mide qué tan buena es una solución candidateada?</div>
+    <div class="quiz-options">
+        <div class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-opt-3" id="opt-3-1">
+            <span class="quiz-option-label">A) El tamaño de la población.</span>
+        </div>
+        <div class="quiz-option" data-correct="true">
+            <input type="radio" name="quiz-opt-3" id="opt-3-2">
+            <span class="quiz-option-label">B) La función fitness o de aptitud. ✅</span>
+        </div>
+        <div class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-opt-3" id="opt-3-3">
+            <span class="quiz-option-label">C) La tasa de mutación flip-bit.</span>
+        </div>
+    </div>
+    <div class="quiz-footer">
+        <button class="btn-secondary btn-quiz-verify">Verificar Respuesta</button>
+        <div class="quiz-feedback"></div>
+    </div>
+</div>
 """
         ))
+
 
         # MÓDULO 3
         m3 = Topic(course_id=curso_ga.id, title="3. Individuos y Población", order=3)
@@ -313,10 +403,12 @@ for gen in range(1, 6):
             title="5.1 Selección por Ruleta, Torneo y Ranking",
             order=1,
             body="""
-<p>El operador de **Selección** decide cuáles individuos de la población actual sobrevivirán y tendrán la oportunidad de reproducirse, imitando la supervivencia del más apto.</p>
+<p>El operador de <strong>Selección</strong> decide cuáles individuos de la población actual sobrevivirán y tendrán la oportunidad de reproducirse, imitando la supervivencia del más apto.</p>
 
 <h3>Selección por Torneo</h3>
 <p>Elegimos aleatoriamente un número $K$ de individuos de la población y realizamos un "enfrentamiento", seleccionando al que tenga el fitness más elevado. El ganador se convertirá en un padre para la próxima generación.</p>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
 
 <!-- SIMULADOR DE SELECCIÓN POR TORNEO -->
 <div class="interactive-simulator">
@@ -339,6 +431,28 @@ for gen in range(1, 6):
                 </p>
             </div>
         </div>
+    </div>
+</div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- QUIZ 5 -->
+<div class="interactive-quiz" data-explanation="El operador de Selección emula la supervivencia del más apto de Darwin. Su único objetivo es seleccionar los mejores cromosomas de la población actual para que actúen como padres y hereden sus buenas características a la descendencia.">
+    <div class="quiz-header">📝 Sección 3: Quiz Obligatorio</div>
+    <div class="quiz-question">¿Cuál es el objetivo principal del operador de Selección?</div>
+    <div class="quiz-options">
+        <div class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-opt-5" id="opt-5-1">
+            <span class="quiz-option-label">A) Cruzar y combinar los cromosomas de dos soluciones.</span>
+        </div>
+        <div class="quiz-option" data-correct="true">
+            <input type="radio" name="quiz-opt-5" id="opt-5-2">
+            <span class="quiz-option-label">B) Escoger a los individuos con mejor fitness de la población actual para que sean los padres de la nueva generación. ✅</span>
+        </div>
+    </div>
+    <div class="quiz-footer">
+        <button class="btn-secondary btn-quiz-verify">Verificar Respuesta</button>
+        <div class="quiz-feedback"></div>
     </div>
 </div>
 """
@@ -406,22 +520,22 @@ Hijo 1:   [A B C D] ┼ [5 6 7 8]  -> [A B C D 5 6 7 8]</code></pre>
     </div>
 </div>
 
-<!-- QUIZ 3 -->
-<div class="interactive-quiz">
-    <div class="quiz-header">📝 Mini Reto: Mutación</div>
+<!-- QUIZ 7 -->
+<div class="interactive-quiz" data-explanation="La mutación altera aleatoriamente algunos bits de los cromosomas (por ejemplo, cambiando un 0 por un 1). Esto introduce rasgos frescos en la población que tal vez no estaban en los padres, evitando que todo el grupo converja prematuramente a una solución mediocre (óptimo local).">
+    <div class="quiz-header">📝 Sección 3: Quiz Obligatorio</div>
     <div class="quiz-question">¿Cuál es el rol principal de la mutación en un Algoritmo Genético?</div>
     <div class="quiz-options">
         <div class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-opt-3" id="opt-3-1">
-            <span class="quiz-option-label">A) Clonar exactamente a los mejores padres.</span>
+            <input type="radio" name="quiz-opt-7" id="opt-7-1">
+            <span class="quiz-option-label">A) Clonar exactamente a los mejores padres de la generación anterior.</span>
         </div>
         <div class="quiz-option" data-correct="true">
-            <input type="radio" name="quiz-opt-3" id="opt-3-2">
+            <input type="radio" name="quiz-opt-7" id="opt-7-2">
             <span class="quiz-option-label">B) Inyectar material genético nuevo para mantener la diversidad y evitar óptimos locales. ✅</span>
         </div>
         <div class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-opt-3" id="opt-3-3">
-            <span class="quiz-option-label">C) Reducir el fitness de toda la población.</span>
+            <input type="radio" name="quiz-opt-7" id="opt-7-3">
+            <span class="quiz-option-label">C) Reducir artificialmente el fitness para retrasar el aprendizaje.</span>
         </div>
     </div>
     <div class="quiz-footer">
@@ -443,33 +557,88 @@ Hijo 1:   [A B C D] ┼ [5 6 7 8]  -> [A B C D 5 6 7 8]</code></pre>
             body="""
 <p>El problema <strong>One-Max</strong> consiste en encontrar una cadena binaria llena completamente de unos (<code>1</code>).</p>
 
-<p>A continuación tienes un laboratorio práctico donde puedes experimentar directamente evaluando el fitness del problema One-Max de forma sencilla.</p>
+<p>Es uno de los problemas educativos más populares porque ilustra de forma transparente cómo el algoritmo evolutivo avanza hacia la mejor solución sin requerir lógica de negocio compleja.</p>
 
-<!-- PLAYGROUND DE PYTHON 3 -->
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- SECCIÓN 1: EJEMPLO YA RESUELTO -->
 <div class="interactive-playground">
     <div class="playground-header">
-        <h4>💻 Laboratorio Práctico: Evaluando el Fitness de One-Max</h4>
+        <h4>💻 Sección 1: Ejemplo Resuelto (Lectura)</h4>
         <span class="playground-badge">Función Fitness</span>
     </div>
     <div class="playground-editor-container">
-        <textarea class="playground-editor">def fitness_onemax(cromosoma):
+        <textarea class="playground-editor" readonly>def fitness_onemax(cromosoma):
     # En el problema One-Max, el fitness es la suma de los unos
     return sum(cromosoma)
 
-# Probemos un cromosoma binario
+# Probemos un cromosoma binario de ejemplo
 mi_adn = [1, 0, 1, 1, 0, 1, 1, 1]
 print("Fitness de mi cromosoma binario:", fitness_onemax(mi_adn))</textarea>
     </div>
     <div class="playground-actions">
-        <button class="btn-primary btn-playground-run">Ejecutar Código →</button>
+        <button class="btn-primary btn-playground-run">▶ Ejecutar Ejemplo</button>
     </div>
     <div class="playground-console-card">
         <div class="playground-console-header">🐚 Consola de Salida:</div>
-        <pre class="playground-console-output">Haz clic en 'Ejecutar Código' para ver la salida aquí...</pre>
+        <pre class="playground-console-output">Haz clic en 'Ejecutar Ejemplo' para ver el resultado...</pre>
+    </div>
+</div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- SECCIÓN 2: EJERCICIO PRÁCTICO PARA EL ESTUDIANTE -->
+<div class="interactive-practice" data-expected-output="3" data-expected-code="sum">
+    <div class="practice-header">
+        <h4>✍️ Sección 2: Práctica de escritura de código manual</h4>
+        <span class="practice-badge">Tu Turno</span>
+    </div>
+    <div class="practice-instructions">
+        <strong>Instrucciones:</strong> Define o completa una función que calcule la suma del cromosoma binario <code>[1, 1, 1, 0]</code> usando la función <code>sum()</code> e imprima el resultado.
+    </div>
+    <div class="practice-editor-container">
+        <textarea class="practice-editor" placeholder="# Escribe tu función de fitness usando sum() y print() manualmente..."></textarea>
+    </div>
+    <div class="practice-actions">
+        <button class="btn-primary btn-practice-run">⚡ Ejecutar y Validar</button>
+        <div class="practice-validation-status pending">
+            <span>⏳ Pendiente de validación</span>
+        </div>
+    </div>
+    <div class="playground-console-card">
+        <div class="playground-console-header">🐚 Consola de Salida de Práctica:</div>
+        <pre class="playground-console-output">Escribe tu código y pulsa 'Ejecutar y Validar'...</pre>
+    </div>
+</div>
+
+<hr style="border-color: rgba(255,255,255,0.05); margin: 3rem 0;">
+
+<!-- QUIZ 8 -->
+<div class="interactive-quiz" data-explanation="En el problema One-Max, el objetivo es tener solo unos (1) en cada posición del cromosoma. Por lo tanto, el fitness máximo es igual a la longitud total del cromosoma. Para un cromosoma de 8 bits, el óptimo absoluto es 8.">
+    <div class="quiz-header">📝 Sección 3: Quiz Obligatorio</div>
+    <div class="quiz-question">¿Cuál es el fitness máximo teórico de un cromosoma binario de longitud 8 en el problema One-Max?</div>
+    <div class="quiz-options">
+        <div class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-opt-8" id="opt-8-1">
+            <span class="quiz-option-label">A) 1, ya que solo medimos si es correcto o no.</span>
+        </div>
+        <div class="quiz-option" data-correct="true">
+            <input type="radio" name="quiz-opt-8" id="opt-8-2">
+            <span class="quiz-option-label">B) 8, que representa tener todos los bits individuales en 1. ✅</span>
+        </div>
+        <div class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-opt-8" id="opt-8-3">
+            <span class="quiz-option-label">C) 0, ya que los algoritmos evolutivos buscan minimizar las sumas.</span>
+        </div>
+    </div>
+    <div class="quiz-footer">
+        <button class="btn-secondary btn-quiz-verify">Verificar Respuesta</button>
+        <div class="quiz-feedback"></div>
     </div>
 </div>
 """
         ))
+
 
         # MÓDULO 9
         m9 = Topic(course_id=curso_ga.id, title="9. Aplicaciones reales", order=9)
