@@ -28,7 +28,7 @@
                 <div class="course-content">
                     <span class="course-tag">Curso Oficial</span>
                     <h3 class="course-title">{{ course.title }}</h3>
-                    <p class="course-desc">{{ course.description }}</p>
+                    <p class="course-desc">{{ course.description or '' }}</p>
                     
                     <!-- Integración del Estado de Inscripción / Progreso -->
                     {% if enrollments_dict and course.id in enrollments_dict %}

@@ -97,7 +97,7 @@
                             </div>
 
                             <h3>{{ course.title }}</h3>
-                            <p class="timeline-course-desc">{{ course.description }}</p>
+                            <p class="timeline-course-desc">{{ course.description or '' }}</p>
                             
                             {% if not unlocked %}
                             <p class="timeline-lock-reason">
