@@ -15,6 +15,7 @@ class Course(db.Model):
     image_url = db.Column(db.String(255), nullable=True)
     level = db.Column(db.String(30), nullable=False, default='Básico')  # Básico / Intermedio / Avanzado
     duration_hours = db.Column(db.Integer, nullable=False, default=10)
+    price = db.Column(db.Float, nullable=False, default=29.99)
     instructor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

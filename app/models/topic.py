@@ -26,6 +26,7 @@ class Content(db.Model):
     topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=False)
     title = db.Column(db.String(150), nullable=False)
     body = db.Column(db.Text, nullable=False) # Explicaciones, Markdown o código HTML
+    video_url = db.Column(db.String(255), nullable=True)
     order = db.Column(db.Integer, nullable=False, default=1)
 
     def __repr__(self):

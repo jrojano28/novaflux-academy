@@ -1,7 +1,7 @@
 <!-- app/templates/home.html -->
 {% extends 'base.html' %}
 
-{% block title %}AntiGravity Academy - Educación Tecnológica de Élite{% endblock %}
+{% block title %}NovaFlux Academy - Educación Tecnológica de Élite{% endblock %}
 
 {% block content %}
 
@@ -44,6 +44,9 @@
             <div class="course-card">
                 <!-- Portada del Curso con Gradiente Dinámico -->
                 <div class="course-cover" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #1a1a4e 0%, #00f2fe 100%)' }};">
+                    {% if course.image_url %}
+                        <img src="{{ course.image_url }}" alt="{{ course.title }}" class="course-cover-img">
+                    {% endif %}
                     <div class="course-cover-overlay">
                         <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
                         <div class="course-duration-badge">⏱ {{ course.duration_hours }}h</div>
@@ -58,6 +61,10 @@
                     <span class="course-tag">Especialización</span>
                     <h3 class="course-title">{{ course.title }}</h3>
                     <p class="course-desc">{{ course.description[:120] ~ '...' if course.description and course.description|length > 120 else course.description }}</p>
+                    <div class="course-price-row">
+                        <span class="course-price">${{ '%.2f'|format(course.price) }}</span>
+                        <span class="course-price-label">pago único</span>
+                    </div>
                     <div class="course-footer">
                         <a href="{{ url_for('course.course_detail', course_id=course.id) }}" class="btn-secondary">Ver Curso</a>
                         <span class="course-topics-count">{{ course.topics|length }} Módulos</span>
@@ -96,6 +103,88 @@
     </div>
 </section>
 {% endif %}
+
+<!-- ═══ SECCIÓN DE PLANES Y PRECIOS ═══ -->
+<section class="pricing-section container">
+    <div class="page-header" style="text-align:center; margin-bottom:3.5rem;">
+        <h2 class="section-title">Planes y Suscripciones</h2>
+        <p class="section-subtitle" style="max-width:560px; margin:0 auto;">Elige el plan que mejor se adapte a tu ritmo de aprendizaje. Accede a contenido premium, mentorías y certificaciones.</p>
+    </div>
+
+    <div class="pricing-grid">
+
+        <!-- PLAN BÁSICO -->
+        <div class="pricing-card">
+            <div class="pricing-card-header">
+                <span class="pricing-icon">🌱</span>
+                <h3 class="pricing-plan-name">Plan Básico</h3>
+                <p class="pricing-plan-desc">Ideal para comenzar tu camino en la tecnología</p>
+            </div>
+            <div class="pricing-price-block">
+                <span class="pricing-amount">$9.99</span>
+                <span class="pricing-period">/mes</span>
+            </div>
+            <ul class="pricing-features">
+                <li>✓ Acceso a 3 cursos básicos</li>
+                <li>✓ Contenido en texto y código</li>
+                <li>✓ Certificado de participación</li>
+                <li>✓ Soporte por email</li>
+                <li class="disabled">✗ Videos de YouTube embebidos</li>
+                <li class="disabled">✗ Trayectorias de aprendizaje</li>
+                <li class="disabled">✗ Mentoría en vivo</li>
+            </ul>
+            <a href="{{ url_for('auth.register') }}" class="btn-pricing btn-pricing-basic">Empezar Gratis →</a>
+        </div>
+
+        <!-- PLAN PRO (DESTACADO) -->
+        <div class="pricing-card pricing-card-featured">
+            <div class="pricing-popular-badge">⭐ MÁS POPULAR</div>
+            <div class="pricing-card-header">
+                <span class="pricing-icon">🚀</span>
+                <h3 class="pricing-plan-name">Plan Pro</h3>
+                <p class="pricing-plan-desc">Para profesionales que quieren avanzar rápido</p>
+            </div>
+            <div class="pricing-price-block">
+                <span class="pricing-amount">$19.99</span>
+                <span class="pricing-period">/mes</span>
+            </div>
+            <ul class="pricing-features">
+                <li>✓ Acceso a todos los cursos</li>
+                <li>✓ Videos de YouTube embebidos</li>
+                <li>✓ Trayectorias de aprendizaje</li>
+                <li>✓ Certificado oficial NovaFlux</li>
+                <li>✓ Soporte prioritario</li>
+                <li>✓ Dashboard de progreso avanzado</li>
+                <li class="disabled">✗ Mentoría en vivo</li>
+            </ul>
+            <a href="{{ url_for('auth.register') }}" class="btn-pricing btn-pricing-pro">Comenzar Ahora →</a>
+        </div>
+
+        <!-- PLAN PREMIUM -->
+        <div class="pricing-card">
+            <div class="pricing-card-header">
+                <span class="pricing-icon">💎</span>
+                <h3 class="pricing-plan-name">Plan Premium</h3>
+                <p class="pricing-plan-desc">Experiencia completa con mentoría personalizada</p>
+            </div>
+            <div class="pricing-price-block">
+                <span class="pricing-amount">$39.99</span>
+                <span class="pricing-period">/mes</span>
+            </div>
+            <ul class="pricing-features">
+                <li>✓ Todo lo del Plan Pro</li>
+                <li>✓ Mentoría en vivo 2x/mes</li>
+                <li>✓ Acceso anticipado a nuevos cursos</li>
+                <li>✓ Proyectos guiados por expertos</li>
+                <li>✓ Certificación Premium verificable</li>
+                <li>✓ Grupo privado de estudio</li>
+                <li>✓ Soporte 24/7 dedicado</li>
+            </ul>
+            <a href="{{ url_for('auth.register') }}" class="btn-pricing btn-pricing-premium">Obtener Premium →</a>
+        </div>
+
+    </div>
+</section>
 
 <!-- CTA SECTION -->
 <section class="cta-section">

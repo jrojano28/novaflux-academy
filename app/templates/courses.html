@@ -1,7 +1,7 @@
 <!-- app/templates/courses.html -->
 {% extends 'base.html' %}
 
-{% block title %}Catálogo de Cursos - AntiGravity Academy{% endblock %}
+{% block title %}Catálogo de Cursos - NovaFlux Academy{% endblock %}
 
 {% block content %}
 <section class="container catalog-section">
@@ -17,6 +17,9 @@
             {% for course in courses %}
             <div class="course-card">
                 <div class="course-cover" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #1a1a4e 0%, #00f2fe 100%)' }};">
+                    {% if course.image_url %}
+                        <img src="{{ course.image_url }}" alt="{{ course.title }}" class="course-cover-img">
+                    {% endif %}
                     <div class="course-cover-overlay">
                         <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
                         <div class="course-duration-badge">⏱ {{ course.duration_hours }}h</div>
@@ -46,6 +49,11 @@
                         </div>
                     {% endif %}
                     
+                    <div class="course-price-row">
+                        <span class="course-price">${{ '%.2f'|format(course.price) }}</span>
+                        <span class="course-price-label">pago único</span>
+                    </div>
+
                     <div class="course-footer">
                         {% if enrollments_dict and course.id in enrollments_dict %}
                             {% set enrollment = enrollments_dict[course.id] %}
