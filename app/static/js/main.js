@@ -183,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ── Menú hamburguesa móvil interactivo ──
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');
 
@@ -193,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.toggle('active');
         });
 
+        // Cerrar menú al hacer clic en cualquier enlace
         document.querySelectorAll('.nav-link-item, .nav-btn-logout, .nav-btn-login, .nav-btn-register').forEach(link => {
             link.addEventListener('click', () => {
                 navToggle.classList.remove('active');
@@ -200,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Cerrar al hacer clic fuera del menú
         document.addEventListener('click', (e) => {
             if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
                 navToggle.classList.remove('active');
@@ -208,8 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
-    const courseSidebar = document.querySelector('.sidebar');
+    // ── Toggler de la barra lateral (Syllabus de Lecciones) en Móvil ──
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const courseSidebar = document.getElementById('course-sidebar');
 
     if (sidebarToggleBtn && courseSidebar) {
         sidebarToggleBtn.addEventListener('click', (e) => {
@@ -217,12 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
             courseSidebar.classList.toggle('active');
         });
 
+        // Cerrar sidebar al seleccionar una lección
         document.querySelectorAll('.lesson-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 courseSidebar.classList.remove('active');
             });
         });
 
+        // Cerrar al hacer clic fuera del sidebar en móvil
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 if (!courseSidebar.contains(e.target) && !sidebarToggleBtn.contains(e.target)) {

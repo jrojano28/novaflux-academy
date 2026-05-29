@@ -7,6 +7,7 @@ from app.services.course_service import CourseService
 from app.services.exercise_service import ExerciseService
 from app.services.quiz_service import QuizService
 from app.services.activity_service import ActivityService
+from app.services.roadmap_service import RoadmapService
 
 course_bp = Blueprint('course', __name__, url_prefix='/courses')
 
@@ -51,18 +52,7 @@ def course_detail(course_id):
         completed = UserLessonProgress.query.filter_by(user_id=user_id).all()
         completed_lesson_ids = [c.content_id for c in completed]
 
-        from app.models.course import RoadmapCourse, RoadmapEnrollment
-        user_roadmaps = RoadmapEnrollment.query.filter_by(user_id=user_id).all()
-        for ur in user_roadmaps:
-            rc = RoadmapCourse.query.filter_by(roadmap_id=ur.roadmap_id, course_id=course_id).first()
-            if rc and rc.order > 1:
-                prev_rc = RoadmapCourse.query.filter_by(roadmap_id=ur.roadmap_id, order=rc.order - 1).first()
-                if prev_rc:
-                    prev_enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=prev_rc.course_id).first()
-                    if not prev_enrollment or prev_enrollment.progress < 100:
-                        is_locked = True
-                        lock_reason = f"Este curso está BLOQUEADO. Debes completar primero '{prev_rc.course.title}' de la trayectoria '{ur.roadmap.title}'."
-                        break
+        is_locked, lock_reason = RoadmapService.check_course_lock_for_user(user_id, course_id)
 
     all_course_contents = []
     for t in sorted(course.topics, key=lambda x: x.order):
@@ -132,7 +122,7 @@ def run_code():
     if not user_id:
         return jsonify({
             'success': False,
-            'output': '💡 Debes iniciar sesión e inscribirte en el curso para ejecutar código en tiempo real.'
+            'output': 'Debes iniciar sesion e inscribirte en el curso para ejecutar codigo en tiempo real.'
         }), 200
 
     data = request.get_json() or {}
@@ -155,7 +145,7 @@ def validate_practice(content_id):
     if not content:
         return jsonify({'success': False, 'valid': False, 'message': 'Contenido no encontrado.'}), 404
     if not _ensure_enrolled_for_content(user_id, content):
-        return jsonify({'success': False, 'valid': False, 'message': 'No estás inscrito en este curso.'}), 403
+        return jsonify({'success': False, 'valid': False, 'message': 'No estas inscrito en este curso.'}), 403
 
     output = CourseService.execute_playground_code(code)
 
@@ -164,7 +154,7 @@ def validate_practice(content_id):
 
     if expected_code and expected_code.lower() not in code.lower():
         is_valid = False
-        error_details = f"Debes incluir la instrucción o palabra clave '{expected_code}'."
+        error_details = f"Debes incluir la instruccion o palabra clave '{expected_code}'."
 
     if expected_output and expected_output.lower() not in output.lower():
         is_valid = False
@@ -177,7 +167,7 @@ def validate_practice(content_id):
             'success': True,
             'valid': True,
             'output': output,
-            'message': '🎉 ¡Ejercicio completado!'
+            'message': 'Ejercicio completado'
         })
     else:
         ExerciseService.save_practice_attempt(user_id, content_id, code, False)
@@ -186,7 +176,7 @@ def validate_practice(content_id):
             'success': True,
             'valid': False,
             'output': output,
-            'message': f'❌ {error_details}'
+            'message': error_details
         })
 
 
@@ -202,7 +192,7 @@ def validate_quiz(content_id):
     if not content:
         return jsonify({'success': False, 'correct': False, 'message': 'Contenido no encontrado.'}), 404
     if not _ensure_enrolled_for_content(user_id, content):
-        return jsonify({'success': False, 'correct': False, 'message': 'No estás inscrito en este curso.'}), 403
+        return jsonify({'success': False, 'correct': False, 'message': 'No estas inscrito en este curso.'}), 403
 
     if selected_is_correct:
         QuizService.save_quiz_attempt(user_id, content_id, True)
@@ -210,7 +200,7 @@ def validate_quiz(content_id):
         return jsonify({
             'success': True,
             'correct': True,
-            'message': '🎉 ¡Correcto! Excelente respuesta.'
+            'message': 'Correcto'
         })
     else:
         QuizService.save_quiz_attempt(user_id, content_id, False)
@@ -218,7 +208,7 @@ def validate_quiz(content_id):
         return jsonify({
             'success': True,
             'correct': False,
-            'message': '❌ Incorrecto. ¡Inténtalo de nuevo!',
+            'message': 'Incorrecto. Intentelo de nuevo.',
             'explanation': explanation
         })
 
@@ -231,7 +221,7 @@ def get_lesson_requirements(content_id):
     if not content:
         return jsonify({'success': False, 'message': 'Contenido no encontrado.'}), 404
     if not _ensure_enrolled_for_content(user_id, content):
-        return jsonify({'success': False, 'message': 'No estás inscrito en este curso.'}), 403
+        return jsonify({'success': False, 'message': 'No estas inscrito en este curso.'}), 403
 
     body = content.body or ''
     reqs = {
@@ -253,7 +243,7 @@ def mark_simulator_done(content_id):
     if not content:
         return jsonify({'success': False, 'message': 'Contenido no encontrado.'}), 404
     if not _ensure_enrolled_for_content(user_id, content):
-        return jsonify({'success': False, 'message': 'No estás inscrito en este curso.'}), 403
+        return jsonify({'success': False, 'message': 'No estas inscrito en este curso.'}), 403
     ExerciseService.save_practice_attempt(user_id, content_id, '# simulator', True)
     db.session.commit()
     return jsonify({'success': True, 'message': 'Simulador completado.'})

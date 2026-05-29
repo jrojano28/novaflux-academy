@@ -42,8 +42,10 @@ def seed_data():
             title="Introducción a la Inteligencia Artificial",
             description="Explora los fundamentos de la inteligencia artificial, el aprendizaje automático y cómo los sistemas resuelven problemas complejos en el mundo real.",
             image_gradient="linear-gradient(135deg, #1a1a4e 0%, #4f46e5 50%, #00f2fe 100%)",
+            image_url="https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
             level="Básico",
             duration_hours=8,
+            price=19.99,
             instructor_id=teacher.id
         )
         db.session.add(curso_intro)
@@ -57,6 +59,7 @@ def seed_data():
             topic_id=t_intro_1.id,
             title="1.1 Qué es la Inteligencia Artificial y Ramas Principales",
             order=1,
+            video_url="https://www.youtube.com/embed/2ePf9rue1Ao",
             body="""
 <p>La <strong>Inteligencia Artificial (IA)</strong> es una de las áreas más fascinantes de la computación moderna. Su objetivo primordial es diseñar sistemas informáticos capaces de realizar tareas que, ejecutadas por seres humanos, requerirían procesos cognitivos complejos, tales como razonar, generalizar, aprender de la experiencia o percibir patrones.</p>
 
@@ -159,8 +162,10 @@ print("Mi puntuación inicial en AntiGravity es:", score)</textarea>
             title="Algoritmos Genéticos en Python",
             description="Aprende a diseñar, optimizar e implementar algoritmos evolutivos en Python desde cero. Resuelve problemas de optimización combinatoria y numérica compleja de manera profesional.",
             image_gradient="linear-gradient(135deg, #0d2137 0%, #10b981 50%, #00f2fe 100%)",
+            image_url="https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
             level="Avanzado",
             duration_hours=20,
+            price=49.99,
             instructor_id=teacher.id
         )
         db.session.add(curso_ga)
@@ -174,6 +179,7 @@ print("Mi puntuación inicial en AntiGravity es:", score)</textarea>
             topic_id=m1.id,
             title="1.1 Relación entre IA y los Algoritmos de Optimización",
             order=1,
+            video_url="https://www.youtube.com/embed/MacV1T1eN0w",
             body="""
 <p>La Inteligencia Artificial no solo comprende el análisis de datos masivos o redes neuronales. Una gran parte de los problemas de la vida real consiste en la <strong>optimización heurística</strong>.</p>
 
@@ -262,6 +268,7 @@ for gen in range(1, 4):
             topic_id=m2.id,
             title="2.1 Historia y Flujo Básico de la Evolución Artificial",
             order=1,
+            video_url="https://www.youtube.com/embed/uQ2t9sJ7gB0",
             body="""
 <p>Los <strong>Algoritmos Genéticos (AG)</strong> emulan la flexibilidad y resiliencia de la selección natural y la evolución darwiniana directamente en sistemas de software.</p>
 

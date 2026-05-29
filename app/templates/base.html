@@ -1,4 +1,4 @@
-<!-- app/views/templates/base.html -->
+<!-- app/templates/base.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,11 +11,10 @@
 <body>
 
 <header>
-    <nav>
-        <div class="nav-container">
+    <nav class="nav-container">
         <a href="{{ url_for('main.home') }}" class="logo">NovaFlux Academy</a>
 
-        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu">
+        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu de navegacion">
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
@@ -34,14 +33,15 @@
                     <li><a href="{{ url_for('main.teacher_panel') }}" id="nav-teacher" class="nav-link-item nav-badge-teacher">Mi Clase</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('main.dashboard') }}" id="nav-dashboard" class="nav-link-item">Dashboard</a></li>
+                
+                <li class="nav-user-chip">
+                    <span class="user-avatar">{{ session.get('user_name', 'U')[0].upper() }}</span>
+                    <span class="user-name-display">{{ session.get('user_name', '') }}</span>
+                </li>
                 <li>
                     <a href="{{ url_for('auth.logout') }}" class="nav-btn-logout">
                         Salir
                     </a>
-                </li>
-                <li class="nav-user-chip">
-                    <span class="user-avatar">{{ session.get('user_name', 'U')[0].upper() }}</span>
-                    {{ session.get('user_name', '') }}
                 </li>
             {% else %}
                 {# Usuario no autenticado: muestra botones de acceso #}
@@ -74,7 +74,7 @@
 <footer>
     <div class="footer-content">
         <div class="footer-brand">
-            <span class="logo" style="font-size:1.3rem;">NovaFlux Academy</span>
+            <span class="logo logo-footer">NovaFlux Academy</span>
             <p>Educación tecnológica de élite para la próxima generación.</p>
         </div>
         <div class="footer-links">
@@ -83,6 +83,9 @@
             {% if not session.get('user_id') %}
                 <a href="{{ url_for('auth.register') }}">Crear Cuenta</a>
             {% endif %}
+        </div>
+        <div class="footer-members">
+            <p><strong>Integrantes:</strong> Juan Rojano — Marleinis Orozco — Luis Bustamante — Yulesis Carranza</p>
         </div>
         <p class="footer-copy">&copy; 2026 NovaFlux Academy. Todos los derechos reservados.</p>
     </div>
