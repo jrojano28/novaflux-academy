@@ -1,0 +1,226 @@
+<!-- app/templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Mi Dashboard - AntiGravity Academy{% endblock %}
+
+{% block content %}
+<section class="container dashboard-section">
+    <!-- Saludo al usuario -->
+    <div class="dashboard-header-card">
+        <div class="dashboard-avatar-circle">
+            {{ user.username[0].upper() }}
+        </div>
+        <div class="dashboard-welcome-info">
+            <h1>¡Hola, {{ user.username }}! 👋</h1>
+            <p>Tu portal de aprendizaje de élite. Sigue conquistando metas tecnológicas.</p>
+        </div>
+    </div>
+
+    <!-- TARJETAS DE ESTADÍSTICAS -->
+    <div class="stats-grid">
+        <div class="stat-card stat-cyan">
+            <div class="stat-card-icon">📚</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.total_courses }}</span>
+                <span class="stat-card-label">Cursos Inscritos</span>
+            </div>
+        </div>
+        <div class="stat-card stat-purple">
+            <div class="stat-card-icon">✅</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.completed }}</span>
+                <span class="stat-card-label">Completados</span>
+            </div>
+        </div>
+        <div class="stat-card stat-magenta">
+            <div class="stat-card-icon">⚡</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.in_progress }}</span>
+                <span class="stat-card-label">En Progreso</span>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-card-icon">🎯</div>
+            <div class="stat-card-info">
+                <span class="stat-card-value">{{ stats.avg_progress }}%</span>
+                <span class="stat-card-label">Avance Promedio</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DISEÑO DE DOS COLUMNAS -->
+    <div class="dashboard-layout-grid">
+        
+        <!-- COLUMNA PRINCIPAL (IZQUIERDA) -->
+        <div class="dashboard-main-col">
+            
+            <!-- MIS CURSOS -->
+            <div class="dashboard-block">
+                <h2 class="section-title">Mis Cursos Inscritos</h2>
+                {% if enrollments %}
+                    <div class="my-courses-list">
+                        {% for enrollment in enrollments %}
+                        <div class="my-course-item">
+                            <div class="my-course-cover" style="background: {{ enrollment.course.image_gradient or 'linear-gradient(135deg,#1a1a4e,#00f2fe)' }};">
+                                🎓
+                            </div>
+                            <div class="my-course-info">
+                                <div class="my-course-header-row">
+                                    <h3>{{ enrollment.course.title }}</h3>
+                                    {% if enrollment.progress >= 100 %}
+                                        <span class="course-status-badge completed">COMPLETADO ✅</span>
+                                    {% elif enrollment.progress > 0 %}
+                                        <span class="course-status-badge in-progress">EN PROGRESO ⚡</span>
+                                    {% else %}
+                                        <span class="course-status-badge not-started">NO INICIADO 📚</span>
+                                    {% endif %}
+                                </div>
+                                <p class="my-course-meta">{{ enrollment.course.topics|length }} módulos · {{ enrollment.course.duration_hours }}h estimadas</p>
+                                
+                                <!-- Barra de progreso integrada -->
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-track">
+                                        <div class="progress-bar-fill" style="width: {{ enrollment.progress }}%;"></div>
+                                    </div>
+                                    <span class="progress-label">{{ enrollment.progress | round(0) | int }}%</span>
+                                </div>
+                            </div>
+                            <div class="my-course-actions">
+                                <a href="{{ url_for('course.course_detail', course_id=enrollment.course.id) }}" class="btn-secondary">
+                                    {% if enrollment.progress >= 100 %}Repasar{% elif enrollment.progress > 0 %}Continuar →{% else %}Empezar →{% endif %}
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <h3>Aún no estás inscrito en ningún curso</h3>
+                        <p>Explora nuestro catálogo e inscríbete para iniciar tu ruta hoy mismo.</p>
+                        <a href="{{ url_for('course.list_courses') }}" class="btn-primary">Explorar Catálogo</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- TRAYECTORIAS DE APRENDIZAJE ACTIVAS -->
+            <div class="dashboard-block">
+                <h2 class="section-title">Mis Rutas de Aprendizaje</h2>
+                {% if active_roadmaps %}
+                    <div class="roadmap-active-list">
+                        {% for rm_info in active_roadmaps %}
+                        <div class="roadmap-active-card" style="--roadmap-color-start: {{ rm_info.roadmap.color_start }};">
+                            <div class="roadmap-active-header">
+                                <div>
+                                    <h3 class="roadmap-active-title">
+                                        <span>{{ rm_info.roadmap.icon or '🗺️' }}</span> {{ rm_info.roadmap.title }}
+                                    </h3>
+                                    <p class="roadmap-active-meta">{{ rm_info.completed_courses }} de {{ rm_info.total_courses }} cursos completados</p>
+                                </div>
+                                <div class="roadmap-active-progress-val">
+                                    <span>{{ rm_info.progress | round(0) | int }}% Completo</span>
+                                </div>
+                            </div>
+                            <!-- Barra de progreso de la trayectoria -->
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" style="width: {{ rm_info.progress }}%; background: linear-gradient(90deg, {{ rm_info.roadmap.color_start }}, {{ rm_info.roadmap.color_end }});"></div>
+                            </div>
+                            <div class="roadmap-active-footer">
+                                <a href="{{ url_for('main.roadmaps') }}" class="btn-secondary" style="border-color: {{ rm_info.roadmap.color_start }}; color: {{ rm_info.roadmap.color_start }};">
+                                    Ver Trayectoria Completa →
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state empty-state-horizontal">
+                        <div class="empty-state-text">
+                            <h4>¿Quieres especializarte en un área profesional?</h4>
+                            <p>Inicia una trayectoria guiada y estructurada secuencialmente paso a paso.</p>
+                        </div>
+                        <a href="{{ url_for('main.roadmaps') }}" class="btn-secondary">
+                            🗺️ Descubrir Rutas
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- CURSOS RECOMENDADOS -->
+            <div class="dashboard-block">
+                <h2 class="section-title">Cursos Recomendados para ti</h2>
+                {% if recommended_courses %}
+                    <div class="courses-grid recommended-grid">
+                        {% for course in recommended_courses %}
+                        <div class="course-card recommended-card">
+                            <div class="course-cover recommended-cover" style="background: {{ course.image_gradient or 'linear-gradient(135deg, #1a1a4e 0%, #00f2fe 100%)' }};">
+                                🚀
+                                <div class="recommended-badge-pos">
+                                    <span class="course-level-badge {{ course.level|lower }}">{{ course.level }}</span>
+                                </div>
+                            </div>
+                            <div class="recommended-body">
+                                <h3 class="recommended-title">{{ course.title }}</h3>
+                                <p class="recommended-desc">{{ course.description }}</p>
+                                <div class="recommended-footer">
+                                    <span class="recommended-time">⏱ {{ course.duration_hours }} horas</span>
+                                    <a href="{{ url_for('course.course_detail', course_id=course.id) }}" class="btn-primary">
+                                        Ver Más →
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="all-enrolled-hint">Estás inscrito en todos nuestros cursos disponibles en este momento. ¡Excelente trabajo!</p>
+                {% endif %}
+            </div>
+
+        </div>
+        
+        <!-- COLUMNA LATERAL (DERECHA) -->
+        <div class="dashboard-side-col">
+            
+            <!-- HISTORIAL DE ACTIVIDADES (TIMELINE) -->
+            <div class="activity-history-card">
+                <h3 class="activity-history-title">
+                    <span>⏱</span> Actividad Reciente
+                </h3>
+                
+                {% if activities %}
+                    <div class="activity-timeline">
+                        {% for act in activities %}
+                        <div class="timeline-node">
+                            <!-- Marcador circular luminoso -->
+                            <div class="timeline-marker {{ act.activity_type }}"></div>
+                            <div class="timeline-content">
+                                <span class="timeline-time">
+                                    {{ act.created_at.strftime('%d %b, %H:%M') if act.created_at.strftime else act.created_at }}
+                                </span>
+                                <p class="timeline-desc">
+                                    {{ act.description }}
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="timeline-empty">
+                        <p>No hay actividades registradas todavía.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- TARJETA INFORMATIVA / LOGRO -->
+            <div class="achievement-card">
+                <div class="achievement-icon">🏆</div>
+                <h4>Próxima Meta</h4>
+                <p>
+                    Completar todas las lecciones de tus cursos activos te desbloqueará certificaciones automatizadas exclusivas en la plataforma.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

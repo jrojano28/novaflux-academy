@@ -1,7 +1,7 @@
-<!-- app/views/templates/home.html -->
+<!-- app/templates/home.html -->
 {% extends 'base.html' %}
 
-{% block title %}NovaFlux Academy - Educación Tecnológica de Élite{% endblock %}
+{% block title %}AntiGravity Academy - Educación Tecnológica de Élite{% endblock %}
 
 {% block content %}
 
@@ -15,11 +15,20 @@
         <a href="{{ url_for('main.roadmaps') }}" class="btn-ghost">Ver Trayectorias →</a>
     </div>
     <div class="hero-stats">
-        <div class="hero-stat"><span class="stat-num">12+</span><span class="stat-label">Cursos</span></div>
+        <div class="hero-stat">
+            <span class="stat-num">12+</span>
+            <span class="stat-label">Cursos</span>
+        </div>
         <div class="hero-stat-divider"></div>
-        <div class="hero-stat"><span class="stat-num">3</span><span class="stat-label">Trayectorias</span></div>
+        <div class="hero-stat">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Trayectorias</span>
+        </div>
         <div class="hero-stat-divider"></div>
-        <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-label">Práctico</span></div>
+        <div class="hero-stat">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">Práctico</span>
+        </div>
     </div>
 </section>
 
@@ -57,7 +66,7 @@
             </div>
             {% endfor %}
         {% else %}
-            <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-state empty-state-fullwidth">
                 <h3>Cursos en Preparación</h3>
                 <p>Pronto lanzaremos los mejores cursos de tecnología. ¡Regresa pronto!</p>
             </div>
