@@ -90,6 +90,7 @@ def enroll(course_id):
     enrollment = Enrollment(user_id=user_id, course_id=course_id, progress=0.0)
     db.session.add(enrollment)
 
+<<<<<<< Updated upstream
     # Registrar actividad
     from app.models.user import ActivityLog
     log = ActivityLog(
@@ -183,3 +184,24 @@ def toggle_complete_lesson(content_id):
         'course_completed': (enrollment.progress >= 100.0) if enrollment else (progress_percentage >= 100.0),
         'course_newly_completed': course_newly_completed
     })
+=======
+        success, result = CourseService.toggle_lesson_completion(user_id, content_id)
+        if success:
+            return jsonify(result)
+        else:
+            return jsonify(result), 400
+
+    @staticmethod
+    def run_code():
+        """Ejecuta código Python básico enviado desde el Playground (AJAX)."""
+        from flask import request
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({'success': False, 'output': 'Debes iniciar sesión para ejecutar código.'}), 401
+
+        data = request.get_json() or {}
+        code = data.get('code', '')
+
+        output = CourseService.execute_playground_code(code)
+        return jsonify({'success': True, 'output': output})
+>>>>>>> Stashed changes
