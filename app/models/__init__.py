@@ -8,5 +8,5 @@ db = SQLAlchemy()
 # Importar los modelos para que SQLAlchemy los detecte al inicializar la BD
 from app.models.user import User, ActivityLog
 from app.models.course import Course, Enrollment, Roadmap, RoadmapCourse, RoadmapEnrollment
-from app.models.topic import Topic, Content, UserLessonProgress
+from app.models.topic import Topic, Content, UserLessonProgress, UserExerciseProgress, UserQuizProgress
 

@@ -5,7 +5,7 @@ from app import create_app
 from app.models import db
 from app.models.user import User, ActivityLog
 from app.models.course import Course, Enrollment, Roadmap, RoadmapCourse, RoadmapEnrollment
-from app.models.topic import Topic, Content
+from app.models.topic import Topic, Content, UserExerciseProgress, UserQuizProgress
 
 app = create_app()
 

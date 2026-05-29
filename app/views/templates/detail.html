@@ -12,7 +12,7 @@
             <span class="course-hero-duration">⏱ {{ course.duration_hours }} horas</span>
         </div>
         <h1>{{ course.title }}</h1>
-        <p>{{ course.description }}</p>
+        <p>{{ course.description or '' }}</p>
         <div class="course-hero-actions">
             {% if is_enrolled %}
                 {% if is_locked %}
@@ -72,6 +72,9 @@
     </div>
     {% else %}
     <div class="detail-layout" id="content-reader">
+        <!-- Botón flotante para mostrar el menú en móvil -->
+        <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Toggle syllabus">📋 Sílabo</button>
+
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">

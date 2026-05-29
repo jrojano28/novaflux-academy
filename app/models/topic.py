@@ -51,3 +51,42 @@ class UserLessonProgress(db.Model):
     def __repr__(self):
         return f'<UserLessonProgress user={self.user_id} content={self.content_id}>'
 
+
+class UserExerciseProgress(db.Model):
+    __tablename__ = 'user_exercise_progress'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content_id = db.Column(db.Integer, db.ForeignKey('contents.id'), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    attempts = db.Column(db.Integer, default=0)
+    last_code = db.Column(db.Text, nullable=True)
+    completed_at = db.Column(db.DateTime, nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'content_id', name='_user_exercise_uc'),)
+
+    user = db.relationship('User', backref=db.backref('exercise_progress', lazy=True, cascade="all, delete-orphan"))
+    content = db.relationship('Content', backref=db.backref('exercise_progress', lazy=True, cascade="all, delete-orphan"))
+
+    def __repr__(self):
+        return f'<UserExerciseProgress user={self.user_id} content={self.content_id} completed={self.completed}>'
+
+
+class UserQuizProgress(db.Model):
+    __tablename__ = 'user_quiz_progress'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content_id = db.Column(db.Integer, db.ForeignKey('contents.id'), nullable=False)
+    passed = db.Column(db.Boolean, default=False)
+    attempts = db.Column(db.Integer, default=0)
+    completed_at = db.Column(db.DateTime, nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'content_id', name='_user_quiz_uc'),)
+
+    user = db.relationship('User', backref=db.backref('quiz_progress', lazy=True, cascade="all, delete-orphan"))
+    content = db.relationship('Content', backref=db.backref('quiz_progress', lazy=True, cascade="all, delete-orphan"))
+
+    def __repr__(self):
+        return f'<UserQuizProgress user={self.user_id} content={self.content_id} passed={self.passed}>'
+

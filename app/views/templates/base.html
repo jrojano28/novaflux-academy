@@ -12,9 +12,16 @@
 
 <header>
     <nav>
+        <div class="nav-container">
         <a href="{{ url_for('main.home') }}" class="logo">NovaFlux Academy</a>
 
-        <ul class="nav-links">
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+
+        <ul class="nav-links" id="nav-links">
             <li><a href="{{ url_for('main.home') }}" id="nav-home" class="nav-link-item">Inicio</a></li>
             <li><a href="{{ url_for('course.list_courses') }}" id="nav-courses" class="nav-link-item">Cursos</a></li>
             <li><a href="{{ url_for('main.roadmaps') }}" id="nav-roadmaps" class="nav-link-item">Trayectorias</a></li>
@@ -42,6 +49,7 @@
                 <li><a href="{{ url_for('auth.register') }}" class="nav-btn-register">Registrarse</a></li>
             {% endif %}
         </ul>
+        </div>
     </nav>
 </header>
 

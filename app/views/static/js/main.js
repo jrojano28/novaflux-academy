@@ -1,41 +1,30 @@
-// app/views/static/js/main.js
-// Lógica frontend JavaScript interactiva para NovaFlux Academy
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Lector SPA: Alternar lecciones en la barra lateral e inicializar navegación ──
     const lessonButtons = Array.from(document.querySelectorAll('.lesson-btn'));
     const contentBlocks = document.querySelectorAll('.lesson-content-block');
 
     if (lessonButtons.length > 0) {
-        // Función para activar una lección específica por su índice
         function activateLessonByIndex(index) {
             if (index < 0 || index >= lessonButtons.length) return;
-            
+
             const btn = lessonButtons[index];
             const targetId = btn.getAttribute('data-target');
 
-            // Quitar clase activa de todos los ítems y añadir al seleccionado
             document.querySelectorAll('.lesson-item').forEach(item => item.classList.remove('active'));
             btn.parentElement.classList.add('active');
 
-            // Quitar clase activa de todos los bloques de contenido y activar el objetivo
             contentBlocks.forEach(block => block.classList.remove('active'));
             const targetBlock = document.getElementById(targetId);
             if (targetBlock) {
                 targetBlock.classList.add('active');
-                
-                // Hacer scroll del panel de lectura hacia arriba
                 const contentArea = document.querySelector('.content-area');
                 if (contentArea) {
                     contentArea.scrollTop = 0;
                 }
             }
 
-            // Actualizar el estado de los botones de navegación secuencial
             updateNavigationButtons(index);
 
-            // Actualizar requisitos de la lección activa
             if (typeof updateLessonRequirements === 'function') {
                 setTimeout(() => {
                     updateLessonRequirements();
@@ -43,8 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-
-        // Función para actualizar y configurar los botones "Anterior" y "Siguiente"
         function updateNavigationButtons(currentIndex) {
             const activeBlock = contentBlocks[currentIndex];
             if (!activeBlock) return;
@@ -52,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const prevBtn = activeBlock.querySelector('.btn-prev-lesson');
             const nextBtn = activeBlock.querySelector('.btn-next-lesson');
 
-            // Botón Anterior
             if (prevBtn) {
                 if (currentIndex === 0) {
                     prevBtn.disabled = true;
@@ -62,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     prevBtn.disabled = false;
                     prevBtn.style.opacity = '1';
                     prevBtn.style.cursor = 'pointer';
-                    // Clonar para limpiar event listeners previos
                     const newPrevBtn = prevBtn.cloneNode(true);
                     prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
                     newPrevBtn.addEventListener('click', () => {
@@ -71,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Botón Siguiente
             if (nextBtn) {
                 if (currentIndex === lessonButtons.length - 1) {
                     nextBtn.disabled = true;
@@ -81,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     nextBtn.disabled = false;
                     nextBtn.style.opacity = '1';
                     nextBtn.style.cursor = 'pointer';
-                    // Clonar para limpiar event listeners previos
                     const newNextBtn = nextBtn.cloneNode(true);
                     nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
                     newNextBtn.addEventListener('click', () => {
@@ -91,93 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Registrar eventos click en los botones de la barra lateral
         lessonButtons.forEach((button, index) => {
             button.addEventListener('click', () => {
                 activateLessonByIndex(index);
             });
         });
 
-        // Inicializar el lector activando la primera lección por defecto
         activateLessonByIndex(0);
     }
 
-    // ── Lógica AJAX para Completar/Desmarcar Lecciones ──
-    const toggleCompleteButtons = document.querySelectorAll('.btn-toggle-complete');
-
-    if (toggleCompleteButtons.length > 0) {
-        toggleCompleteButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const contentId = button.getAttribute('data-content-id');
-                
-                // Enviar petición POST vía AJAX
-                fetch(`/courses/lessons/${contentId}/toggle-complete`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // 1. Actualizar estilos del botón
-                        if (data.completed) {
-                            button.classList.add('completed');
-                            button.textContent = '✓ Lección Completada';
-                            button.style.background = 'rgba(16, 185, 129, 0.15)';
-                            button.style.color = 'var(--neon-green)';
-                            button.style.border = '1px solid var(--neon-green)';
-                            button.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.2)';
-                        } else {
-                            button.classList.remove('completed');
-                            button.textContent = 'Marcar como Completada';
-                            button.style.background = 'transparent';
-                            button.style.color = 'var(--text-main)';
-                            button.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                            button.style.boxShadow = 'none';
-                        }
-
-                        // 2. Actualizar el checkmark de la barra lateral
-                        const sidebarItem = document.getElementById(`sidebar-item-${contentId}`);
-                        if (sidebarItem) {
-                            const checkmark = sidebarItem.querySelector('.sidebar-checkmark');
-                            if (checkmark) {
-                                if (data.completed) {
-                                    sidebarItem.classList.add('completed-item');
-                                    checkmark.textContent = '✓';
-                                    checkmark.style.opacity = '1';
-                                } else {
-                                    sidebarItem.classList.remove('completed-item');
-                                    checkmark.textContent = '○';
-                                    checkmark.style.opacity = '0.2';
-                                }
-                            }
-                        }
-
-                        // 3. Actualizar la barra de progreso del curso (si existe)
-                        const progressBarFill = document.getElementById('course-progress-bar');
-                        const progressPercentVal = document.getElementById('progress-percent-val');
-                        if (progressBarFill) {
-                            progressBarFill.style.width = `${data.progress}%`;
-                        }
-                        if (progressPercentVal) {
-                            progressPercentVal.textContent = Math.round(data.progress);
-                        }
-
-                        // 4. Lanzar notificación flotante si el curso se completó recién
-                        if (data.course_newly_completed) {
-                            showFlashMessage('¡Felicidades! Has completado el 100% de este curso. Revisa tu Dashboard.', 'success');
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al togglear el completado de lección:', error);
-                });
-            });
-        });
-    }
-
-    // Función auxiliar para renderizar mensajes flash dinámicos
     function showFlashMessage(message, category) {
         const container = document.querySelector('.flash-container') || (() => {
             const el = document.createElement('div');
@@ -194,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         container.appendChild(flash);
 
-        // Auto-dismiss en 6 segundos
         setTimeout(() => {
             flash.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             flash.style.opacity = '0';
@@ -203,7 +107,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 6000);
     }
 
-    // ── Barra de fortaleza de contraseña ──
+    function showRewardNotification(title, emoji) {
+        const container = document.querySelector('.flash-container') || (() => {
+            const el = document.createElement('div');
+            el.className = 'flash-container';
+            document.body.appendChild(el);
+            return el;
+        })();
+
+        const reward = document.createElement('div');
+        reward.className = 'flash flash-reward';
+        reward.innerHTML = `
+            <div class="reward-content">
+                <span class="reward-emoji">${emoji}</span>
+                <div>
+                    <strong>${title}</strong>
+                </div>
+            </div>
+        `;
+        container.appendChild(reward);
+
+        setTimeout(() => {
+            reward.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            reward.style.opacity = '0';
+            reward.style.transform = 'translateX(20px)';
+            setTimeout(() => reward.remove(), 500);
+        }, 5000);
+    }
+
     const passwordInput = document.getElementById('password');
     const strengthFill = document.getElementById('strength-fill');
     const strengthLabel = document.getElementById('strength-label');
@@ -218,11 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (/[^A-Za-z0-9]/.test(pwd)) strength++;
 
             const levels = [
-                { label: 'Muy débil', color: '#f43f5e', width: '15%' },
-                { label: 'Débil', color: '#f59e0b', width: '35%' },
+                { label: 'Muy d\u00e9bil', color: '#f43f5e', width: '15%' },
+                { label: 'D\u00e9bil', color: '#f59e0b', width: '35%' },
                 { label: 'Aceptable', color: '#eab308', width: '60%' },
                 { label: 'Fuerte', color: '#10b981', width: '80%' },
-                { label: '¡Muy fuerte!', color: '#00f2fe', width: '100%' }
+                { label: '\u00a1Muy fuerte!', color: '#00f2fe', width: '100%' }
             ];
 
             const level = levels[Math.min(strength, 4)];
@@ -235,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Flash messages auto-dismiss después de 6 segundos ──
     document.querySelectorAll('.flash').forEach(flash => {
         setTimeout(() => {
             flash.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -245,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 6000);
     });
 
-    // ── Animación de barras de progreso al cargar (dashboard) ──
     document.querySelectorAll('.progress-bar-fill').forEach(bar => {
         const target = bar.style.width;
         bar.style.width = '0%';
@@ -253,10 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { bar.style.width = target; }, 100);
         });
     });
-<<<<<<< Updated upstream:app/views/static/js/main.js
-=======
 
-    // ── Menú hamburguesa móvil interactivo ──
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');
 
@@ -267,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.toggle('active');
         });
 
-        // Cerrar menú al hacer clic en cualquier enlace
         document.querySelectorAll('.nav-link-item, .nav-btn-logout, .nav-btn-login, .nav-btn-register').forEach(link => {
             link.addEventListener('click', () => {
                 navToggle.classList.remove('active');
@@ -275,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Cerrar al hacer clic fuera del menú
         document.addEventListener('click', (e) => {
             if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
                 navToggle.classList.remove('active');
@@ -284,9 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Toggler de la barra lateral (Syllabus de Lecciones) en Móvil ──
-    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
-    const courseSidebar = document.getElementById('course-sidebar');
+    const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const courseSidebar = document.querySelector('.sidebar');
 
     if (sidebarToggleBtn && courseSidebar) {
         sidebarToggleBtn.addEventListener('click', (e) => {
@@ -294,14 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
             courseSidebar.classList.toggle('active');
         });
 
-        // Cerrar sidebar al seleccionar una lección
         document.querySelectorAll('.lesson-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 courseSidebar.classList.remove('active');
             });
         });
 
-        // Cerrar al hacer clic fuera del sidebar en móvil
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 if (!courseSidebar.contains(e.target) && !sidebarToggleBtn.contains(e.target)) {
@@ -311,12 +232,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── GESTIÓN DINÁMICA DE REQUISITOS DE LECCIÓN (FASE 3) ──
     function getActiveLessonBlock() {
         return document.querySelector('.lesson-content-block.active');
     }
 
-    function updateLessonRequirements() {
+    async function fetchLessonRequirements(lessonId) {
+        try {
+            const response = await fetch(`/courses/lessons/${lessonId}/requirements`);
+            const data = await response.json();
+            if (data.success) {
+                return data.requirements;
+            }
+        } catch (e) {
+            console.error('Error fetching requirements:', e);
+        }
+        return null;
+    }
+
+    async function updateLessonRequirements() {
         const activeBlock = getActiveLessonBlock();
         if (!activeBlock) return;
 
@@ -324,12 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const completeBtn = activeBlock.querySelector('.btn-toggle-complete');
         if (!completeBtn) return;
 
-        // Buscar componentes interactivos en esta lección
         const hasQuiz = activeBlock.querySelector('.interactive-quiz') !== null;
         const hasPractice = activeBlock.querySelector('.interactive-practice') !== null;
         const hasSimulator = activeBlock.querySelector('.interactive-simulator') !== null;
 
-        // Si no hay ningún componente interactivo, la lección está lista para completar directamente
         if (!hasQuiz && !hasPractice && !hasSimulator) {
             completeBtn.disabled = false;
             completeBtn.classList.remove('locked-btn');
@@ -338,24 +269,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Obtener estado de completado desde localStorage
-        const quizPassed = localStorage.getItem(`novaflux_lesson_${lessonId}_quiz_passed`) === 'true';
-        const practicePassed = localStorage.getItem(`novaflux_lesson_${lessonId}_practice_passed`) === 'true';
-        const simulatorPassed = localStorage.getItem(`novaflux_lesson_${lessonId}_simulator_passed`) === 'true';
+        const reqs = await fetchLessonRequirements(lessonId);
+        if (!reqs) return;
 
-        // Generar o actualizar tarjeta de requisitos
+        const quizPassed = reqs.quiz_passed;
+        const practicePassed = reqs.practice_completed;
+        const simulatorPassed = reqs.simulator_completed;
+
         let reqCard = activeBlock.querySelector('.lesson-requirements-card');
         if (!reqCard) {
             reqCard = document.createElement('div');
             reqCard.className = 'lesson-requirements-card';
-            // Insertar arriba del botón de completado
             const completionBox = activeBlock.querySelector('.lesson-completion-box');
             if (completionBox) {
                 completionBox.insertBefore(reqCard, completionBox.firstChild);
             }
         }
 
-        // Armar lista de tareas en HTML
         let itemsHtml = '';
         let allMet = true;
 
@@ -365,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             itemsHtml += `
                 <li class="${metClass}">
                     <div class="requirement-checkbox">${check}</div>
-                    <span>✍️ Completa la práctica de código manual</span>
+                    <span>✍️ Completa la pr\u00e1ctica de c\u00f3digo manual</span>
                 </li>
             `;
             if (!practicePassed) allMet = false;
@@ -389,19 +319,18 @@ document.addEventListener('DOMContentLoaded', () => {
             itemsHtml += `
                 <li class="${metClass}">
                     <div class="requirement-checkbox">${check}</div>
-                    <span>🧬 Realiza la simulación evolutiva interactiva</span>
+                    <span>🧬 Realiza la simulaci\u00f3n evolutiva interactiva</span>
                 </li>
             `;
             if (!simulatorPassed) allMet = false;
         }
 
-        // Actualizar la interfaz de requisitos
         if (allMet) {
             reqCard.style.borderColor = 'var(--neon-green)';
             reqCard.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.15)';
             reqCard.innerHTML = `
-                <h4 style="color: var(--neon-green); border-color: rgba(16,185,129,0.15)">🏆 ¡Todos los requisitos cumplidos!</h4>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.5rem 0 0 0;">Ya puedes marcar la lección como completada para desbloquear el siguiente paso.</p>
+                <h4 style="color: var(--neon-green); border-color: rgba(16,185,129,0.15)">🏆 \u00a1Todos los requisitos cumplidos!</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.5rem 0 0 0;">Ya puedes marcar la lecci\u00f3n como completada para desbloquear el siguiente paso.</p>
             `;
             completeBtn.disabled = false;
             completeBtn.classList.remove('locked-btn');
@@ -421,19 +350,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const toggleCompleteButtons = document.querySelectorAll('.btn-toggle-complete');
 
-
-    // Modificación ligera en el toggle_complete para refrescar la página tras guardar en BD
     if (toggleCompleteButtons.length > 0) {
         toggleCompleteButtons.forEach(button => {
-            // Reemplazar event listener clonando el botón para limpiar binds previos
             const newBtn = button.cloneNode(true);
             button.parentNode.replaceChild(newBtn, button);
-            
+
             newBtn.addEventListener('click', () => {
                 const contentId = newBtn.getAttribute('data-content-id');
-                const isAlreadyCompleted = newBtn.classList.contains('completed');
-                
+
                 fetch(`/courses/lessons/${contentId}/toggle-complete`, {
                     method: 'POST',
                     headers: {
@@ -443,27 +369,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showFlashMessage(data.completed ? '🎉 ¡Lección completada y guardada!' : 'Lección desmarcada.', 'success');
-                        
-                        // Si se acaba de completar, recargamos el navegador para que el backend compute y desbloquee la siguiente lección secuencial
+                        if (data.completed) {
+                            showRewardNotification('\u00a1Lecci\u00f3n completada y guardada!', '🎉');
+                        } else {
+                            showFlashMessage('Lecci\u00f3n desmarcada.', 'info');
+                        }
+
                         setTimeout(() => {
                             window.location.reload();
                         }, 1200);
+                    } else if (data.requirements_not_met) {
+                        showFlashMessage('Completa todos los ejercicios y quizzes primero.', 'error');
+                        updateLessonRequirements();
+                    } else {
+                        showFlashMessage(data.message || 'Error al procesar.', 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Error al togglear lección:', error);
+                    console.error('Error al togglear lecci\u00f3n:', error);
                 });
             });
         });
     }
 
-    // ── PLAYGROUND DE PYTHON SIMPLE (AJAX) ──
     document.querySelectorAll('.btn-playground-run').forEach(button => {
         button.addEventListener('click', () => {
             const container = button.closest('.interactive-playground');
+            if (!container) return;
             const editor = container.querySelector('.playground-editor');
             const consoleOutput = container.querySelector('.playground-console-output');
+            if (!editor || !consoleOutput) return;
             const code = editor.value;
 
             consoleOutput.textContent = "Ejecutando ejemplo resuelto...";
@@ -485,13 +420,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── SECCIÓN 2: PRÁCTICA DE ESCRITURA DE CÓDIGO MANUAL ──
     document.querySelectorAll('.btn-practice-run').forEach(button => {
         button.addEventListener('click', () => {
             const container = button.closest('.interactive-practice');
+            if (!container) return;
             const editor = container.querySelector('.practice-editor');
             const consoleOutput = container.querySelector('.playground-console-output');
             const statusBox = container.querySelector('.practice-validation-status');
+            if (!editor || !consoleOutput || !statusBox) return;
             const code = editor.value;
 
             const expectedOutput = container.getAttribute('data-expected-output') || '';
@@ -499,79 +435,53 @@ document.addEventListener('DOMContentLoaded', () => {
             const lessonBlock = container.closest('.lesson-content-block');
             const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
 
-            consoleOutput.textContent = "Ejecutando y validando tu código...";
+            consoleOutput.textContent = "Ejecutando y validando tu c\u00f3digo...";
             statusBox.className = "practice-validation-status pending";
             statusBox.innerHTML = "⏳ Validando...";
 
-            fetch('/courses/run-code', {
+            fetch(`/courses/lessons/${lessonId}/validate-practice`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ code: code })
+                body: JSON.stringify({
+                    code: code,
+                    expected_code: expectedCode,
+                    expected_output: expectedOutput
+                })
             })
             .then(res => res.json())
             .then(data => {
                 consoleOutput.textContent = data.output;
 
-                // Si no está autenticado, la salida de sandbox informará la advertencia
-                if (!data.success || data.output.includes("💡 Debes iniciar sesión")) {
-                    statusBox.className = "practice-validation-status error";
-                    statusBox.innerHTML = "❌ Inicia sesión";
-                    return;
-                }
-
-                // ── MÓDULO DE VALIDACIÓN AUTOMÁTICA SIMPLE ──
-                let isCodeValid = true;
-                let errorDetails = '';
-
-                // 1. Validar presencia de palabras clave requeridas
-                if (expectedCode && !code.toLowerCase().includes(expectedCode.toLowerCase())) {
-                    isCodeValid = false;
-                    errorDetails = `Debe incluir la instrucción o palabra clave '${expectedCode}'.`;
-                }
-
-                // 2. Validar salida en consola esperada
-                if (expectedOutput && !data.output.toLowerCase().includes(expectedOutput.toLowerCase())) {
-                    isCodeValid = false;
-                    errorDetails = `La consola no contiene la salida esperada '${expectedOutput}'.`;
-                }
-
-                if (isCodeValid) {
+                if (data.valid) {
                     statusBox.className = "practice-validation-status success";
-                    statusBox.innerHTML = "🎉 ¡Ejercicio completado!";
-                    showFlashMessage('🎉 ¡Excelente! Práctica completada con éxito.', 'success');
-                    
-                    // Guardar progreso localmente
-                    localStorage.setItem(`novaflux_lesson_${lessonId}_practice_passed`, 'true');
+                    statusBox.innerHTML = "🎉 \u00a1Ejercicio completado!";
+                    showRewardNotification('\u00a1Excelente! Pr\u00e1ctica completada con \u00e9xito.', '🎉');
                     updateLessonRequirements();
                 } else {
                     statusBox.className = "practice-validation-status error";
-                    statusBox.innerHTML = `❌ Fallido: ${errorDetails}`;
+                    statusBox.innerHTML = data.message;
                 }
             })
             .catch(err => {
-                consoleOutput.textContent = "Error de conexión: " + err;
+                consoleOutput.textContent = "Error de conexi\u00f3n: " + err;
                 statusBox.className = "practice-validation-status error";
                 statusBox.innerHTML = "❌ Error de servidor";
             });
         });
     });
 
-    // ── QUIZZES DINÁMICOS E INTERACTIVOS OBLIGATORIOS ──
     document.querySelectorAll('.interactive-quiz').forEach(quiz => {
         const options = quiz.querySelectorAll('.quiz-option');
         const verifyBtn = quiz.querySelector('.btn-quiz-verify');
         const feedback = quiz.querySelector('.quiz-feedback');
         const lessonBlock = quiz.closest('.lesson-content-block');
         const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
-
-        // Almacenar la explicación general del quiz
-        const explanationText = quiz.getAttribute('data-explanation') || 'La respuesta correcta se alinea con los fundamentos teóricos expuestos en el módulo.';
+        const explanationText = quiz.getAttribute('data-explanation') || 'La respuesta correcta se alinea con los fundamentos te\u00f3ricos expuestos en el m\u00f3dulo.';
 
         options.forEach(opt => {
             opt.addEventListener('click', (e) => {
-                // Evitar triggers múltiples
                 options.forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
                 const radio = opt.querySelector('input[type="radio"]');
@@ -579,15 +489,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        if (verifyBtn) {
-            // Limpiar binds anteriores
+        if (verifyBtn && feedback) {
             const newVerifyBtn = verifyBtn.cloneNode(true);
             verifyBtn.parentNode.replaceChild(newVerifyBtn, verifyBtn);
 
             newVerifyBtn.addEventListener('click', () => {
                 let selectedOpt = quiz.querySelector('.quiz-option.selected');
-                
-                // Búsqueda defensiva por si hicieron clic directo en el input radio nativo
+
                 if (!selectedOpt) {
                     const checkedRadio = quiz.querySelector('input[type="radio"]:checked');
                     if (checkedRadio) {
@@ -599,53 +507,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!selectedOpt) {
                     feedback.style.display = 'flex';
                     feedback.className = 'quiz-feedback incorrect';
-                    feedback.innerHTML = '⚠️ Selecciona primero una opción.';
+                    feedback.innerHTML = '⚠️ Selecciona primero una opci\u00f3n.';
                     return;
                 }
 
                 const isCorrect = selectedOpt.getAttribute('data-correct') === 'true';
                 feedback.style.display = 'flex';
 
-                // Remover cualquier caja de explicación previa
                 const existingExplanation = quiz.querySelector('.quiz-explanation-box');
                 if (existingExplanation) existingExplanation.remove();
 
-                if (isCorrect) {
-                    feedback.className = 'quiz-feedback correct';
-                    feedback.innerHTML = '🎉 ¡Correcto! Excelente respuesta.';
-                    showFlashMessage('🎉 ¡Excelente! Cuestionario aprobado.', 'success');
-                    
-                    // Guardar progreso localmente
-                    localStorage.setItem(`novaflux_lesson_${lessonId}_quiz_passed`, 'true');
-                    updateLessonRequirements();
-                } else {
-                    feedback.className = 'quiz-feedback incorrect';
-                    feedback.innerHTML = '❌ Incorrecto. ¡Inténtalo de nuevo!';
-                    
-                    // Inyectar explicación amigable del error para guiar al estudiante
-                    const expBox = document.createElement('div');
-                    expBox.className = 'quiz-explanation-box';
-                    expBox.innerHTML = `
-                        <div class="quiz-explanation-title">💡 Explicación del Concepto:</div>
-                        <p>${explanationText}</p>
-                    `;
-                    quiz.appendChild(expBox);
+                fetch(`/courses/lessons/${lessonId}/validate-quiz`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        correct: isCorrect,
+                        explanation: explanationText
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.correct) {
+                        feedback.className = 'quiz-feedback correct';
+                        feedback.innerHTML = '🎉 \u00a1Correcto! Excelente respuesta.';
+                        showRewardNotification('\u00a1Excelente! Cuestionario aprobado.', '🏆');
+                        updateLessonRequirements();
+                    } else {
+                        feedback.className = 'quiz-feedback incorrect';
+                        feedback.innerHTML = data.message;
 
-                    // Guardar como no aprobado en localStorage
-                    localStorage.setItem(`novaflux_lesson_${lessonId}_quiz_passed`, 'false');
-                    updateLessonRequirements();
-                }
+                        const expBox = document.createElement('div');
+                        expBox.className = 'quiz-explanation-box';
+                        expBox.innerHTML = `
+                            <div class="quiz-explanation-title">💡 Explicaci\u00f3n del Concepto:</div>
+                            <p>${data.explanation || explanationText}</p>
+                            <div class="quiz-retry-hint">
+                                <span>🔄 Intentar nuevamente</span>
+                            </div>
+                        `;
+                        quiz.appendChild(expBox);
+                        updateLessonRequirements();
+                    }
+                })
+                .catch(err => {
+                    feedback.style.display = 'flex';
+                    feedback.className = 'quiz-feedback incorrect';
+                    feedback.innerHTML = '❌ Error de conexi\u00f3n.';
+                });
             });
         }
     });
 
-    // ── SIMULADOR DE EVOLUCIÓN GENÉTICA (Módulo 2) ──
     const evolverBtn = document.getElementById('btn-evolve-dna');
     const dnaList = document.getElementById('evolve-dna-list');
     const genCounter = document.getElementById('evolve-dna-gen');
     const maxFitnessSpan = document.getElementById('evolve-dna-max-fitness');
 
-    if (evolverBtn && dnaList) {
+    if (evolverBtn && dnaList && genCounter && maxFitnessSpan) {
         let currentGen = 1;
         let population = [
             { dna: 'AABB', fitness: 2 },
@@ -666,7 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
             currentGen++;
             genCounter.textContent = currentGen;
 
-            // Simulación client-side
             population.sort((a,b) => b.fitness - a.fitness);
             let parents = [population[0].dna, population[1].dna];
 
@@ -713,21 +632,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const lessonBlock = evolverBtn.closest('.lesson-content-block');
             const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
 
-            // Al realizar al menos una iteración evolutiva, consideramos interactuado el simulador
-            localStorage.setItem(`novaflux_lesson_${lessonId}_simulator_passed`, 'true');
+            fetch(`/courses/lessons/${lessonId}/mark-simulator-done`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).catch(e => console.error(e));
+
             updateLessonRequirements();
 
             if (population[0].dna === 'BBBB') {
-                showFlashMessage('🏆 ¡Evolución completada! Has alcanzado el ADN óptimo: BBBB', 'success');
+                showRewardNotification('\u00a1Evoluci\u00f3n completada! ADN \u00f3ptimo: BBBB', '🏆');
                 evolverBtn.disabled = true;
-                evolverBtn.textContent = '🧬 Óptimo Alcanzado';
+                evolverBtn.textContent = '🧬 \u00d3ptimo Alcanzado';
             } else {
-                showFlashMessage(`🎉 Generación ${currentGen} creada con éxito.`, 'info');
+                showFlashMessage(`🎉 Generaci\u00f3n ${currentGen} creada con \u00e9xito.`, 'info');
             }
         });
     }
 
-    // ── SIMULADOR DE SELECCIÓN POR TORNEO (Módulo 5) ──
     const runTournamentBtn = document.getElementById('btn-run-tournament');
     const tournamentList = document.getElementById('tournament-dna-list');
 
@@ -775,18 +696,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 tournamentList.appendChild(card);
             });
 
-            showFlashMessage(`👑 ¡Ganador del torneo: ${winner.dna}!`, 'success');
+            showRewardNotification(`\u00a1Ganador del torneo: ${winner.dna}!`, '👑');
 
             const lessonBlock = runTournamentBtn.closest('.lesson-content-block');
             const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
-            
-            // Marcar simulador completado al interactuar
-            localStorage.setItem(`novaflux_lesson_${lessonId}_simulator_passed`, 'true');
+
+            fetch(`/courses/lessons/${lessonId}/mark-simulator-done`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).catch(e => console.error(e));
+
             updateLessonRequirements();
         });
     }
 
-    // ── SIMULADOR DE MUTACIÓN FLIP-BIT (Módulo 7) ──
     const runMutationBtn = document.getElementById('btn-run-mutation');
     const mutationList = document.getElementById('mutation-dna-list');
 
@@ -794,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
         runMutationBtn.addEventListener('click', () => {
             const inputEl = document.getElementById('mutation-input-dna');
             const rateEl = document.getElementById('mutation-rate-input');
-            
+
             let dna = (inputEl ? inputEl.value : '10101010').trim() || '10101010';
             let rate = parseFloat(rateEl ? rateEl.value : 0.2) || 0.2;
 
@@ -817,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             mutationList.innerHTML = '';
-            
+
             const origCard = document.createElement('div');
             origCard.className = 'chromosome-card-visual';
             origCard.innerHTML = `
@@ -830,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mutCard = document.createElement('div');
             mutCard.className = 'chromosome-card-visual';
             mutCard.innerHTML = `
-                <span class="chromosome-index">Después:</span>
+                <span class="chromosome-index">Despu\u00e9s:</span>
                 <span class="chromosome-dna">🧬 ${mutatedHtml}</span>
                 <span class="chromosome-fitness-val" style="color:var(--neon-magenta)">
                     ${flippedCount > 0 ? '⚡ MUTADO (' + flippedCount + ' bits)' : '✕ Sin cambios'}
@@ -839,23 +762,24 @@ document.addEventListener('DOMContentLoaded', () => {
             mutationList.appendChild(mutCard);
 
             if (flippedCount > 0) {
-                showFlashMessage(`⚡ Mutación exitosa. Se han alterado ${flippedCount} genes.`, 'success');
+                showRewardNotification(`\u00a1Mutaci\u00f3n exitosa! Se alteraron ${flippedCount} genes.`, '⚡');
             } else {
                 showFlashMessage('Sin mutaciones en esta tirada azarosa.', 'info');
             }
 
             const lessonBlock = runMutationBtn.closest('.lesson-content-block');
             const lessonId = lessonBlock ? lessonBlock.getAttribute('data-lesson-id') : '0';
-            
-            // Marcar simulador completado al interactuar
-            localStorage.setItem(`novaflux_lesson_${lessonId}_simulator_passed`, 'true');
+
+            fetch(`/courses/lessons/${lessonId}/mark-simulator-done`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).catch(e => console.error(e));
+
             updateLessonRequirements();
         });
     }
 
-    // Inicializar requirements por primera vez al finalizar DOMContentLoaded
     setTimeout(() => {
         updateLessonRequirements();
     }, 150);
 });
-
