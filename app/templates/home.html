@@ -60,7 +60,7 @@
                 <div class="course-content">
                     <span class="course-tag">Especialización</span>
                     <h3 class="course-title">{{ course.title }}</h3>
-                    <p class="course-desc">{{ course.description[:120] ~ '...' if course.description and course.description|length > 120 else course.description }}</p>
+                    <p class="course-desc">{{ course.description[:120] ~ '...' if course.description and course.description|length > 120 else (course.description or '') }}</p>
                     <div class="course-price-row">
                         <span class="course-price">${{ '%.2f'|format(course.price) }}</span>
                         <span class="course-price-label">pago único</span>
@@ -95,7 +95,7 @@
             <div class="roadmap-card-content">
                 <div class="roadmap-icon">{{ roadmap.icon or '🧠' }}</div>
                 <h3>{{ roadmap.title }}</h3>
-                <p>{{ roadmap.description[:90] ~ '...' if roadmap.description and roadmap.description|length > 90 else roadmap.description }}</p>
+                <p>{{ roadmap.description[:90] ~ '...' if roadmap.description and roadmap.description|length > 90 else (roadmap.description or '') }}</p>
                 <span class="roadmap-courses-count">{{ roadmap.courses|length }} Cursos incluidos</span>
             </div>
         </a>

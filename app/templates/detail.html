@@ -17,7 +17,7 @@
             <span class="course-hero-price">🏷️ ${{ '%.2f'|format(course.price) }}</span>
         </div>
         <h1>{{ course.title }}</h1>
-        <p>{{ course.description }}</p>
+        <p>{{ course.description or '' }}</p>
         <div class="course-hero-actions">
             {% if is_enrolled %}
                 {% if is_locked %}
@@ -100,11 +100,12 @@
                             <ul class="lesson-list">
                                 {% for content in topic.contents|sort(attribute='order') %}
                                     {% set is_completed = content.id in completed_lesson_ids %}
-                                    <li class="lesson-item {% if sidebar_first.value %}active{% set sidebar_first.value = false %}{% endif %} {% if is_completed %}completed-item{% endif %}" id="sidebar-item-{{ content.id }}">
-                                        <button class="lesson-btn" data-target="lesson-content-{{ content.id }}">
+                                    {% set is_unlocked = content.id in unlocked_lesson_ids %}
+                                    <li class="lesson-item {% if sidebar_first.value and is_unlocked %}active{% set sidebar_first.value = false %}{% endif %} {% if is_completed %}completed-item{% endif %} {% if not is_unlocked %}locked-item{% endif %}" id="sidebar-item-{{ content.id }}">
+                                        <button class="lesson-btn" data-target="lesson-content-{{ content.id }}" {% if not is_unlocked %}disabled{% endif %}>
                                             <span class="lesson-btn-title">{{ content.title }}</span>
                                             <span class="sidebar-checkmark">
-                                                {% if is_completed %}✓{% else %}○{% endif %}
+                                                {% if not is_unlocked %}🔒{% elif is_completed %}✓{% else %}○{% endif %}
                                             </span>
                                         </button>
                                     </li>
@@ -126,7 +127,8 @@
                     {% for topic in course.topics|sort(attribute='order') %}
                         {% for content in topic.contents|sort(attribute='order') %}
                             {% set is_completed = content.id in completed_lesson_ids %}
-                            <div class="lesson-content-block {% if not first_lesson_rendered.value %}active{% set first_lesson_rendered.value = true %}{% endif %}" id="lesson-content-{{ content.id }}" data-lesson-id="{{ content.id }}">
+                            {% set is_unlocked = content.id in unlocked_lesson_ids %}
+                            <div class="lesson-content-block {% if not first_lesson_rendered.value and is_unlocked %}active{% set first_lesson_rendered.value = true %}{% endif %}" id="lesson-content-{{ content.id }}" data-lesson-id="{{ content.id }}">
                                 <div class="lesson-meta">{{ topic.title }}</div>
                                 <h1 class="lesson-title-display">{{ content.title }}</h1>
                                 
@@ -141,9 +143,19 @@
                                 </div>
                                 {% endif %}
 
-                                <div class="lesson-body-display">
-                                    {{ content.body|safe }}
-                                </div>
+                                {% if is_unlocked %}
+                                    <div class="lesson-body-display">
+                                        {{ content.body|safe }}
+                                    </div>
+                                {% else %}
+                                    <div class="lesson-locked-inmersive-card">
+                                        <div class="lock-icon">🔒</div>
+                                        <h3>Contenido Bloqueado</h3>
+                                        <p>
+                                            Completa todas las lecciones, cuestionarios y ejercicios del módulo anterior para desbloquear esta lección y continuar aprendiendo.
+                                        </p>
+                                    </div>
+                                {% endif %}
 
                                 <!-- Botón interactivo de completado -->
                                 {% if is_enrolled %}
@@ -186,4 +198,12 @@
     </div>
     {% endif %}
 </div>
+
+<style>
+@keyframes pulseLock {
+    0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.2)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.5)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.2)); }
+}
+</style>
 {% endblock %}
