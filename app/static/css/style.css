@@ -3577,17 +3577,18 @@ footer p {
 
 .playground-editor {
     width: 100%;
-    height: 150px;
+    min-height: 220px;
+    height: 220px;
     background: #020408;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.2rem;
     color: #cbd5e1;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 0.95rem;
-    resize: none;
+    font-size: 1rem;
+    resize: vertical;
     outline: none;
-    line-height: 1.5;
+    line-height: 1.6;
     transition: var(--transition);
 }
 
@@ -3627,14 +3628,15 @@ footer p {
 
 .playground-console-output {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--neon-green);
     white-space: pre-wrap;
     background: transparent;
     border: none;
     padding: 0;
     margin: 0;
-    max-height: 200px;
+    min-height: 80px;
+    max-height: 300px;
     overflow-y: auto;
 }
 
@@ -4333,7 +4335,7 @@ footer p {
     background: #020408;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.06);
-    padding: 0.5rem;
+    padding: 0.75rem;
     position: relative;
     margin-bottom: 1.25rem;
     transition: all 0.3s ease;
@@ -4346,7 +4348,8 @@ footer p {
 
 .practice-editor {
     width: 100%;
-    height: 120px;
+    min-height: 220px;
+    height: 220px;
     background: transparent;
     border: none;
     outline: none;
@@ -4354,8 +4357,8 @@ footer p {
     font-family: 'Courier New', Courier, monospace;
     font-size: 1.05rem;
     resize: vertical;
-    padding: 0.8rem;
-    line-height: 1.5;
+    padding: 1.2rem;
+    line-height: 1.6;
 }
 
 .practice-actions {
