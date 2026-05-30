@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="NovaFlux Academy - Plataforma de educación tecnológica de élite. Aprende algoritmos, IA y desarrollo de software de vanguardia.">
     <title>{% block title %}NovaFlux Academy{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
 </head>
 <body>
 
@@ -91,7 +91,7 @@
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
 <script>
     // Resaltar el enlace activo de navegación según la ruta actual
     document.addEventListener('DOMContentLoaded', () => {
